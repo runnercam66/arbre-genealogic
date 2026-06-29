@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Proposta · Arbre Genealògic</title>
+<style>
+  :root { --accent: #7c4a1e; --bg: #fdf8f0; --border: #c8a87a; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); font-family: Georgia, serif; color: #333; }
+  header {
+    background: var(--accent); color: #fff;
+    display: flex; align-items: center; gap: 12px; padding: 11px 20px;
+  }
+  header h1 { font-size: 1.05rem; flex: 1; }
+  header a, header button {
+    color: rgba(255,255,255,.85); text-decoration: none; font-size: .82rem;
+    padding: 4px 10px; border: 1px solid rgba(255,255,255,.4);
+    border-radius: 4px; cursor: pointer; background: rgba(255,255,255,.15); font-family: inherit;
+  }
+  main { max-width: 620px; margin: 28px auto; padding: 0 16px 60px; }
+  h2 { font-size: 1.15rem; color: var(--accent); margin-bottom: 6px; }
+  .intro { font-size: .88rem; color: #777; margin-bottom: 24px; line-height: 1.55; }
+  fieldset { border: 1px solid var(--border); border-radius: 8px; padding: 15px 18px; margin-bottom: 18px; background: #fff8f0; }
+  legend { font-weight: bold; color: var(--accent); padding: 0 6px; font-size: .88rem; }
+  .field { margin-bottom: 12px; }
+  .field:last-child { margin-bottom: 0; }
+  label { display: block; font-size: .8rem; color: #666; margin-bottom: 3px; }
+  .req { color: #c00; }
+  input[type=text], input[type=date], input[type=email], select, textarea {
+    width: 100%; padding: 7px 10px; border: 1px solid var(--border);
+    border-radius: 5px; font-size: .88rem; background: #fff; font-family: inherit; color: #333;
+  }
+  input:focus, select:focus, textarea:focus {
+    outline: none; border-color: var(--accent); box-shadow: 0 0 0 2px rgba(124,74,30,.12);
+  }
+  textarea { height: 70px; resize: vertical; }
+  .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .row3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+  .hint { font-size: .73rem; color: #bbb; margin-top: 3px; }
+
+  /* Parentesco */
+  .parentesco-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .parentesco-row span { font-size: .88rem; color: #666; white-space: nowrap; }
+  .parentesco-row select { width: auto; flex-shrink: 0; }
+  .parentesco-row input  { flex: 1; min-width: 160px; }
+
+  .mort-toggle { display: flex; align-items: center; gap: 8px; font-size: .83rem; cursor: pointer; color: #666; margin-bottom: 10px; }
+  #mort-fields { display: none; }
+
+  .foto-box {
+    border: 2px dashed var(--border); border-radius: 7px; padding: 16px;
+    text-align: center; font-size: .83rem; color: #999; background: #fff;
+  }
+  .foto-box input[type=file] { margin-top: 8px; font-size: .8rem; }
+
+  .btn {
+    width: 100%; padding: 11px; background: var(--accent); color: #fff;
+    border: none; border-radius: 6px; font-size: .95rem; cursor: pointer;
+    font-family: inherit; margin-top: 6px;
+  }
+  .btn:hover { opacity: .85; }
+  .btn:disabled { opacity: .45; cursor: not-allowed; }
+  #ok { display: none; background: #e8f5e9; border: 1px solid #a5d6a7; border-radius: 8px; padding: 20px; text-align: center; color: #2e7d32; margin-top: 16px; line-height: 1.7; }
+  #err { display: none; background: #fdecea; border: 1px solid #f5c6cb; border-radius: 6px; padding: 10px 14px; color: #c62828; font-size: .85rem; margin-top: 10px; }
+  .hp { display: none; }
+</style>
+</head>
+<body>
+<header>
+  <h1 id="h-title">🌳 Arbre Genealògic · Proposta</h1>
+  <a href="index.html" id="btn-back">← Tornar</a>
+  <button onclick="toggleLang()" id="btn-lang">Castellano</button>
+</header>
+
+<main>
+  <h2 id="f-h">Proposa un nou membre de la família</h2>
+  <p class="intro" id="f-intro">Omple els camps que sàpigues. L'administrador rebrà un email, ho revisarà i afegirà la persona a l'arbre. Els camps amb <span class="req">*</span> són obligatoris.</p>
+
+  <form id="form">
+    <input class="hp" type="text" name="_gotcha">
+    <input type="hidden" name="_subject" id="f-subject" value="Nova proposta · Arbre genealògic">
+    <input type="hidden" name="_next" id="f-next">
+
+    <!-- 1. DADES PERSONALS -->
+    <fieldset>
+      <legend id="fs-dades">Dades personals</legend>
+
+      <div class="row3">
+        <div class="field">
+          <label><span id="l-nom">Nom</span> <span class="req">*</span></label>
+          <input type="text" name="nom" required placeholder="ex: Maria">
+        </div>
+        <div class="field">
+          <label id="l-cog1">1r cognom</label>
+          <input type="text" name="cognom1" placeholder="ex: Castel">
+        </div>
+        <div class="field">
+          <label id="l-cog2">2n cognom</label>
+          <input type="text" name="cognom2" placeholder="ex: Riba">
+        </div>
+      </div>
+
+      <div class="row2">
+        <div class="field">
+          <label id="l-gen">Gènere</label>
+          <select name="genere">
+            <option value="">—</option>
+            <option value="home" id="opt-home">Home</option>
+            <option value="dona" id="opt-dona">Dona</option>
+            <option value="altre" id="opt-altre">Altre</option>
+          </select>
+        </div>
+        <div class="field">
+          <label id="l-ofici">Ofici / Professió</label>
+          <input type="text" name="ofici" placeholder="ex: Mestra, Pagès, Metge…">
+        </div>
+      </div>
+
+      <div class="row2">
+        <div class="field">
+          <label id="l-naix">Data de naixement</label>
+          <input type="date" name="data_naix">
+        </div>
+        <div class="field">
+          <label id="l-lloc-naix">Lloc de naixement</label>
+          <input type="text" name="lloc_naix" placeholder="ex: Barcelona">
+        </div>
+      </div>
+
+      <div class="field">
+        <label id="l-llocs">Llocs on va viure</label>
+        <input type="text" name="llocs_viscuts" placeholder="ex: Saragossa, Barcelona, Lleida…">
+        <p class="hint" id="hint-llocs">Separa els llocs amb comes</p>
+      </div>
+
+      <label class="mort-toggle">
+        <input type="checkbox" id="chk-mort" onchange="toggleMort()">
+        <span id="l-mort-chk">Ja ha mort</span>
+      </label>
+      <div id="mort-fields">
+        <div class="row2">
+          <div class="field">
+            <label id="l-data-mort">Data de defunció</label>
+            <input type="date" name="data_mort">
+          </div>
+          <div class="field">
+            <label id="l-lloc-mort">Lloc de defunció</label>
+            <input type="text" name="lloc_mort" placeholder="ex: Saragossa">
+          </div>
+        </div>
+      </div>
+    </fieldset>
+
+    <!-- 2. PARENTESCO -->
+    <fieldset>
+      <legend id="fs-rel">Vincle familiar</legend>
+      <p class="hint" id="hint-rel-intro" style="margin-bottom:12px">Indica com es relaciona aquesta persona amb algú que ja és a l'arbre.</p>
+
+      <div class="field">
+        <label id="l-parentesco">Aquesta persona és…</label>
+        <div class="parentesco-row">
+          <select name="parentesco_tipus" id="sel-parentesco">
+            <option value="">— selecciona —</option>
+            <option value="fill" id="opt-fill">fill</option>
+            <option value="filla" id="opt-filla">filla</option>
+            <option value="espos" id="opt-espos">espòs</option>
+            <option value="esposa" id="opt-esposa">esposa</option>
+            <option value="parella" id="opt-parella">parella</option>
+            <option value="pare" id="opt-pare">pare</option>
+            <option value="mare" id="opt-mare">mare</option>
+          </select>
+          <span id="l-de">de</span>
+          <input type="text" name="parentesco_de" id="inp-parentesco" placeholder="ex: Ricard Santamaria Castel">
+        </div>
+        <p class="hint" id="hint-parentesco" style="margin-top:6px">Escriu el nom complet de la persona existent a l'arbre</p>
+      </div>
+
+      <div class="field">
+        <label id="l-i-de">I també de (si escau, segon progenitor o cònjuge anterior)</label>
+        <input type="text" name="parentesco_de2" placeholder="ex: Sonia Velasco Menal">
+      </div>
+    </fieldset>
+
+    <!-- 3. FOTO -->
+    <fieldset>
+      <legend id="fs-foto">Foto</legend>
+      <div class="foto-box">
+        <div>📷 <span id="foto-txt">Adjunta una foto de la persona</span></div>
+        <input type="file" name="foto_adjunta" accept="image/*" id="foto-input" onchange="previewFoto(this)">
+        <img id="foto-preview" style="display:none;max-width:140px;max-height:140px;margin-top:8px;border-radius:6px" src="" alt="preview">
+        <p class="hint" id="foto-hint" style="margin-top:6px">JPG o PNG · Màx. 5 MB (Formspree no admet fitxers grans — si la foto és gran, envia-la per email a <span id="foto-email-span"></span>)</p>
+      </div>
+    </fieldset>
+
+    <!-- 4. NOTES -->
+    <fieldset>
+      <legend id="fs-notes">Altres dades</legend>
+      <div class="field">
+        <label id="l-notes">Comentaris, anècdotes, informació addicional</label>
+        <textarea name="notes" id="notes-ph" placeholder="Anècdotes, caràcter, curiositats…"></textarea>
+      </div>
+    </fieldset>
+
+    <!-- 5. QUI ERES TU -->
+    <fieldset>
+      <legend id="fs-tu">Qui fas la proposta?</legend>
+      <div class="row2">
+        <div class="field">
+          <label><span id="l-sub-nom">El teu nom</span> <span class="req">*</span></label>
+          <input type="text" name="submissor_nom" required placeholder="ex: Joan Cot">
+        </div>
+        <div class="field">
+          <label id="l-sub-email">El teu email</label>
+          <input type="email" name="submissor_email" placeholder="ex: joan@email.com">
+        </div>
+      </div>
+      <p class="hint" id="hint-sub">Rebràs confirmació quan s'aprovi la proposta.</p>
+    </fieldset>
+
+    <button type="submit" class="btn" id="btn-sub">Enviar proposta</button>
+    <div id="err"></div>
+  </form>
+
+  <div id="ok">
+    <div style="font-size:2.2rem">✅</div>
+    <p id="ok-txt">Proposta enviada! L'administrador la revisarà aviat. Gràcies per contribuir a l'arbre familiar.</p>
+    <br><a href="index.html" id="ok-link" style="color:#2e7d32">← Tornar a l'arbre</a>
+  </div>
+</main>
+
+<script src="config.js"></script>
+<script>
+let lang = localStorage.getItem('lang') || 'ca';
+
+const T = {
+  ca: {
+    title:'🌳 Arbre Genealògic · Proposta', back:'← Tornar', lang:'Castellano',
+    fh:'Proposa un nou membre de la família',
+    intro:'Omple els camps que sàpigues. L\'administrador rebrà un email, ho revisarà i afegirà la persona a l\'arbre. Els camps amb * són obligatoris.',
+    dades:'Dades personals', rel:'Vincle familiar', foto:'Foto', notes:'Altres dades', tu:'Qui fas la proposta?',
+    nom:'Nom', cog1:'1r cognom', cog2:'2n cognom', gen:'Gènere', ofici:'Ofici / Professió',
+    naix:'Data de naixement', lloc_naix:'Lloc de naixement',
+    llocs:'Llocs on va viure', hint_llocs:'Separa els llocs amb comes',
+    mort_chk:'Ja ha mort', data_mort:'Data de defunció', lloc_mort:'Lloc de defunció',
+    hint_rel_intro:'Indica com es relaciona aquesta persona amb algú que ja és a l\'arbre.',
+    parentesco:'Aquesta persona és…', de:'de',
+    hint_parentesco:'Escriu el nom complet de la persona existent a l\'arbre',
+    i_de:'I també de (si escau, segon progenitor o cònjuge anterior)',
+    fill:'fill', filla:'filla', espos:'espòs', esposa:'esposa', parella:'parella', pare:'pare', mare:'mare',
+    home:'Home', dona:'Dona', altre:'Altre',
+    foto_txt:'Adjunta una foto de la persona',
+    foto_hint:'JPG o PNG · Màx. 5 MB (si la foto és gran, envia-la per email a',
+    lnotes:'Comentaris, anècdotes, informació addicional',
+    notes_ph:'Anècdotes, caràcter, curiositats…',
+    sub_nom:'El teu nom', sub_email:'El teu email',
+    hint_sub:'Rebràs confirmació quan s\'aprovi la proposta.',
+    submit:'Enviar proposta', sending:'Enviant…',
+    ok:'Proposta enviada! L\'administrador la revisarà aviat. Gràcies per contribuir a l\'arbre familiar.',
+    ok_link:'← Tornar a l\'arbre',
+    err:'Error en enviar. Torna-ho a intentar.',
+    subject:'Nova proposta · Arbre genealògic',
+  },
+  es: {
+    title:'🌳 Árbol Genealógico · Propuesta', back:'← Volver', lang:'Català',
+    fh:'Propón un nuevo miembro de la familia',
+    intro:'Rellena los campos que sepas. El administrador recibirá un email, lo revisará y añadirá la persona al árbol. Los campos con * son obligatorios.',
+    dades:'Datos personales', rel:'Vínculo familiar', foto:'Foto', notes:'Otros datos', tu:'¿Quién hace la propuesta?',
+    nom:'Nombre', cog1:'1er apellido', cog2:'2do apellido', gen:'Género', ofici:'Oficio / Profesión',
+    naix:'Fecha de nacimiento', lloc_naix:'Lugar de nacimiento',
+    llocs:'Lugares donde vivió', hint_llocs:'Separa los lugares con comas',
+    mort_chk:'Ya ha fallecido', data_mort:'Fecha de defunción', lloc_mort:'Lugar de defunción',
+    hint_rel_intro:'Indica cómo se relaciona esta persona con alguien que ya está en el árbol.',
+    parentesco:'Esta persona es…', de:'de',
+    hint_parentesco:'Escribe el nombre completo de la persona existente en el árbol',
+    i_de:'Y también de (si corresponde, segundo progenitor o cónyuge anterior)',
+    fill:'hijo', filla:'hija', espos:'esposo', esposa:'esposa', parella:'pareja', pare:'padre', mare:'madre',
+    home:'Hombre', dona:'Mujer', altre:'Otro',
+    foto_txt:'Adjunta una foto de la persona',
+    foto_hint:'JPG o PNG · Máx. 5 MB (si la foto es grande, envíala por email a',
+    lnotes:'Comentarios, anécdotas, información adicional',
+    notes_ph:'Anécdotas, carácter, curiosidades…',
+    sub_nom:'Tu nombre', sub_email:'Tu email',
+    hint_sub:'Recibirás confirmación cuando se apruebe la propuesta.',
+    submit:'Enviar propuesta', sending:'Enviando…',
+    ok:'¡Propuesta enviada! El administrador la revisará pronto. Gracias por contribuir al árbol familiar.',
+    ok_link:'← Volver al árbol',
+    err:'Error al enviar. Inténtalo de nuevo.',
+    subject:'Nueva propuesta · Árbol genealógico',
+  }
+};
+
+function applyLang() {
+  const t = T[lang]; document.documentElement.lang = lang; document.title = t.title;
+  document.getElementById('h-title').textContent = t.title;
+  document.getElementById('btn-back').textContent = t.back;
+  document.getElementById('btn-lang').textContent = t.lang;
+  document.getElementById('f-h').textContent = t.fh;
+  document.getElementById('fs-dades').textContent = t.dades;
+  document.getElementById('fs-rel').textContent = t.rel;
+  document.getElementById('fs-foto').textContent = t.foto;
+  document.getElementById('fs-notes').textContent = t.notes;
+  document.getElementById('fs-tu').textContent = t.tu;
+  document.getElementById('l-nom').textContent = t.nom;
+  document.getElementById('l-cog1').textContent = t.cog1;
+  document.getElementById('l-cog2').textContent = t.cog2;
+  document.getElementById('l-gen').textContent = t.gen;
+  document.getElementById('l-ofici').textContent = t.ofici;
+  document.getElementById('l-naix').textContent = t.naix;
+  document.getElementById('l-lloc-naix').textContent = t.lloc_naix;
+  document.getElementById('l-llocs').textContent = t.llocs;
+  document.getElementById('hint-llocs').textContent = t.hint_llocs;
+  document.getElementById('l-mort-chk').textContent = t.mort_chk;
+  document.getElementById('l-data-mort').textContent = t.data_mort;
+  document.getElementById('l-lloc-mort').textContent = t.lloc_mort;
+  document.getElementById('hint-rel-intro').textContent = t.hint_rel_intro;
+  document.getElementById('l-parentesco').textContent = t.parentesco;
+  document.getElementById('l-de').textContent = t.de;
+  document.getElementById('hint-parentesco').textContent = t.hint_parentesco;
+  document.getElementById('l-i-de').textContent = t.i_de;
+  document.getElementById('opt-fill').textContent = t.fill;
+  document.getElementById('opt-filla').textContent = t.filla;
+  document.getElementById('opt-espos').textContent = t.espos;
+  document.getElementById('opt-esposa').textContent = t.esposa;
+  document.getElementById('opt-parella').textContent = t.parella;
+  document.getElementById('opt-pare').textContent = t.pare;
+  document.getElementById('opt-mare').textContent = t.mare;
+  document.getElementById('opt-home').textContent = t.home;
+  document.getElementById('opt-dona').textContent = t.dona;
+  document.getElementById('opt-altre').textContent = t.altre;
+  document.getElementById('foto-txt').textContent = t.foto_txt;
+  document.getElementById('l-notes').textContent = t.lnotes;
+  document.getElementById('notes-ph').placeholder = t.notes_ph;
+  document.getElementById('l-sub-nom').textContent = t.sub_nom;
+  document.getElementById('l-sub-email').textContent = t.sub_email;
+  document.getElementById('hint-sub').textContent = t.hint_sub;
+  document.getElementById('btn-sub').textContent = t.submit;
+  document.getElementById('ok-txt').textContent = t.ok;
+  document.getElementById('ok-link').textContent = t.ok_link;
+  document.getElementById('f-subject').value = t.subject;
+
+  if (typeof ADMIN_EMAIL !== 'undefined') {
+    document.getElementById('foto-email-span').textContent = ADMIN_EMAIL + ')';
+    document.getElementById('foto-hint').innerHTML =
+      `${t.foto_hint} <strong>${ADMIN_EMAIL}</strong>)`;
+  }
+}
+
+function toggleLang() { lang = lang === 'ca' ? 'es' : 'ca'; localStorage.setItem('lang',lang); applyLang(); }
+function toggleMort() { document.getElementById('mort-fields').style.display = document.getElementById('chk-mort').checked ? 'block' : 'none'; }
+function previewFoto(input) {
+  const file = input.files[0]; if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => { const img = document.getElementById('foto-preview'); img.src = e.target.result; img.style.display = 'block'; };
+  reader.readAsDataURL(file);
+}
+
+if (location.search.includes('ok=1')) {
+  document.getElementById('form').style.display = 'none';
+  document.getElementById('ok').style.display = 'block';
+}
+
+document.getElementById('form').addEventListener('submit', async e => {
+  const t = T[lang];
+  const formspreeId = typeof FORMSPREE_ID !== 'undefined' ? FORMSPREE_ID : null;
+  if (!formspreeId || formspreeId === 'xxxxxxxx') {
+    // Sense Formspree configurat: envia igualment (la pàgina per defecte de Formspree)
+    return;
+  }
+  e.preventDefault();
+  const btn = document.getElementById('btn-sub');
+  const errEl = document.getElementById('err');
+  btn.disabled = true; btn.textContent = t.sending; errEl.style.display = 'none';
+
+  const fd = new FormData(e.target);
+  const res = await fetch(`https://formspree.io/f/${formspreeId}`, { method:'POST', body: fd, headers:{ Accept:'application/json' } });
+  if (res.ok) {
+    document.getElementById('form').style.display = 'none';
+    document.getElementById('ok').style.display = 'block';
+  } else {
+    errEl.textContent = t.err; errEl.style.display = 'block';
+    btn.disabled = false; btn.textContent = t.submit;
+  }
+});
+
+applyLang();
+</script>
+</body>
+</html>

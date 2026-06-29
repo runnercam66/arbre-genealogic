@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin · Arbre Genealògic</title>
+<style>
+  :root { --accent: #7c4a1e; --bg: #fdf8f0; --border: #c8a87a; --green: #2e7d32; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); font-family: Georgia, serif; color: #333; }
+  header {
+    background: var(--accent); color: #fff;
+    display: flex; align-items: center; gap: 12px; padding: 11px 20px;
+  }
+  header h1 { font-size: 1.05rem; flex: 1; }
+  header a {
+    color: rgba(255,255,255,.85); text-decoration: none; font-size: .82rem;
+    padding: 4px 10px; border: 1px solid rgba(255,255,255,.4); border-radius: 4px;
+  }
+  main { max-width: 780px; margin: 28px auto; padding: 0 16px 60px; }
+  h2 { font-size: 1.15rem; color: var(--accent); margin-bottom: 16px; }
+
+  .card {
+    background: #fff8f0; border: 1px solid var(--border); border-radius: 10px;
+    padding: 20px 22px; margin-bottom: 18px;
+  }
+  .card h3 { font-size: 1rem; color: var(--accent); margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+  .card p, .card li { font-size: .88rem; line-height: 1.6; color: #444; }
+  .card ol, .card ul { padding-left: 20px; margin-top: 6px; }
+  .card li { margin-bottom: 4px; }
+
+  .step {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 24px; height: 24px; border-radius: 50%;
+    background: var(--accent); color: #fff; font-size: .78rem; font-weight: bold; flex-shrink: 0;
+  }
+  code {
+    background: #f0e8da; border-radius: 4px; padding: 1px 6px;
+    font-family: monospace; font-size: .85rem;
+  }
+  pre {
+    background: #2b1a0e; color: #f0d9b5; border-radius: 8px;
+    padding: 16px; font-size: .8rem; overflow-x: auto; margin-top: 10px; line-height: 1.6;
+  }
+  .tag { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: .75rem; font-weight: bold; }
+  .tag-ok { background: #d4edda; color: #155724; }
+  .tag-info { background: #cce5ff; color: #004085; }
+
+  .json-editor { width: 100%; height: 380px; font-family: monospace; font-size: .8rem;
+    border: 1px solid var(--border); border-radius: 6px; padding: 12px;
+    background: #2b1a0e; color: #f0d9b5; resize: vertical; }
+  .btn { padding: 8px 18px; border: none; border-radius: 5px; cursor: pointer; font-family: inherit; font-size: .88rem; }
+  .btn-primary { background: var(--accent); color: #fff; }
+  .btn-primary:hover { opacity: .85; }
+  .btn-copy { background: #e8dcc8; color: var(--accent); margin-left: 8px; }
+  #add-result { margin-top: 12px; font-size: .85rem; color: var(--green); display: none; }
+
+  .tree-preview { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px,1fr)); gap: 10px; margin-top: 12px; }
+  .person-mini {
+    background: #fff; border: 1px solid var(--border); border-radius: 6px;
+    padding: 8px 10px; font-size: .78rem;
+  }
+  .person-mini strong { display: block; color: #222; margin-bottom: 2px; }
+  .person-mini span { color: #999; }
+  .home-dot { color: #3a6186; } .dona-dot { color: #a04060; }
+</style>
+</head>
+<body>
+<header>
+  <h1>⚙ Panell d'administració · Arbre Genealògic</h1>
+  <a href="index.html">← Tornar a l'arbre</a>
+</header>
+
+<main>
+  <h2>Com gestionar l'arbre</h2>
+
+  <!-- BLOC 1: Flux de treball -->
+  <div class="card">
+    <h3><span class="step">1</span> Quan arribi una proposta per email</h3>
+    <p>Formspree t'enviarà un email a <strong id="admin-email-show"></strong> amb totes les dades de la persona proposada. El flux és:</p>
+    <ol>
+      <li>Reps l'email de Formspree amb les dades</li>
+      <li>Si ho aprovaves: afegeix la persona al <code>familia.json</code> (veure bloc 2)</li>
+      <li>Puges el fitxer actualitzat a GitHub → l'arbre s'actualitza automàticament</li>
+      <li>Si ho rebutges: simplement esborra l'email</li>
+    </ol>
+  </div>
+
+  <!-- BLOC 2: Afegir persona -->
+  <div class="card">
+    <h3><span class="step">2</span> Afegir una persona al JSON</h3>
+    <p>Cada persona al <code>familia.json</code> té aquesta forma. Copia, omple i enganxa al fitxer:</p>
+    <pre id="plantilla-json">{
+  "id": "p21",
+  "nom": "Nom",
+  "cognoms": "Cognom1 Cognom2",
+  "genere": "home",
+  "data_naix": "1950-03-15",
+  "lloc_naix": "Barcelona",
+  "data_mort": null,
+  "lloc_mort": null,
+  "foto_url": null,
+  "notes": null,
+  "pare_id": "p01",
+  "mare_id": "p02"
+}</pre>
+    <p style="margin-top:10px;font-size:.82rem;color:#888">
+      • <code>id</code>: segueix la seqüència (p21, p22…) ·
+      • <code>genere</code>: <code>"home"</code>, <code>"dona"</code> o <code>"altre"</code> ·
+      • <code>data_naix</code>: format AAAA-MM-DD ·
+      • <code>pare_id</code>/<code>mare_id</code>: l'id de la persona pare/mare, o <code>null</code>
+    </p>
+    <p style="margin-top:8px;font-size:.82rem;color:#888">
+      Si la persona té parella, afegeix també una línia a <code>"unions"</code>:<br>
+      <code>{ "id": "u08", "persona1_id": "p21", "persona2_id": "p14" }</code>
+    </p>
+    <button class="btn btn-copy" onclick="copiarPlantilla()">📋 Copiar plantilla</button>
+    <span id="copy-ok" style="font-size:.8rem;color:var(--green);display:none;margin-left:8px">✓ Copiat!</span>
+  </div>
+
+  <!-- BLOC 3: Pujar a GitHub -->
+  <div class="card">
+    <h3><span class="step">3</span> Pujar els canvis a GitHub</h3>
+    <p><strong>Opció A — Des del navegador (més fàcil):</strong></p>
+    <ol>
+      <li>Ves al teu repositori a <strong>github.com</strong></li>
+      <li>Fes clic a <code>familia.json</code></li>
+      <li>Fes clic al llapis ✏️ (Edit this file)</li>
+      <li>Afegeix la nova persona al JSON</li>
+      <li>A baix: <em>"Commit changes"</em> → guarda</li>
+    </ol>
+    <p style="margin-top:12px"><strong>Opció B — Des del terminal (si tens Git):</strong></p>
+    <pre>git add familia.json
+git commit -m "Afegeix [nom] a l'arbre"
+git push</pre>
+    <p style="margin-top:8px;font-size:.82rem;color:#888">
+      ⚡ GitHub Pages actualitza l'arbre en menys d'un minut.
+    </p>
+  </div>
+
+  <!-- BLOC 4: Afegir foto -->
+  <div class="card">
+    <h3><span class="step">4</span> Afegir una foto</h3>
+    <ol>
+      <li>Puja la foto a qualsevol servei gratuït: <strong>Google Photos, Dropbox, ImgBB…</strong></li>
+      <li>Obtén l'URL directa de la imatge (ha d'acabar en <code>.jpg</code> o <code>.png</code>)</li>
+      <li>Posa l'URL al camp <code>"foto_url"</code> de la persona al JSON</li>
+    </ol>
+    <p style="margin-top:8px;font-size:.82rem;color:#888">
+      Per ImgBB (recomanat): ves a <strong>imgbb.com</strong>, puja la foto, copia el <em>Direct link</em>.
+    </p>
+  </div>
+
+  <!-- BLOC 5: Persones actuals -->
+  <div class="card">
+    <h3>📋 Persones actuals a l'arbre</h3>
+    <p style="font-size:.82rem;color:#888;margin-bottom:10px">Útil per trobar els IDs quan afegeixis relacions.</p>
+    <div class="tree-preview" id="tree-preview">
+      <p style="color:#bbb;font-size:.82rem">Carregant…</p>
+    </div>
+    <p style="margin-top:10px;font-size:.78rem;color:#bbb" id="prox-id"></p>
+  </div>
+
+</main>
+
+<script src="config.js"></script>
+<script>
+// Mostra email admin
+if (typeof ADMIN_EMAIL !== 'undefined') {
+  document.getElementById('admin-email-show').textContent = ADMIN_EMAIL;
+}
+
+// Copia plantilla JSON
+function copiarPlantilla() {
+  navigator.clipboard.writeText(document.getElementById('plantilla-json').textContent).then(() => {
+    const ok = document.getElementById('copy-ok');
+    ok.style.display = 'inline'; setTimeout(() => ok.style.display = 'none', 2000);
+  });
+}
+
+// Carrega persones actuals
+async function loadPersones() {
+  const preview = document.getElementById('tree-preview');
+  try {
+    const url = (typeof FAMILIA_JSON_URL !== 'undefined' && FAMILIA_JSON_URL.includes('raw.githubusercontent'))
+      ? FAMILIA_JSON_URL : 'familia.json';
+    const r = await fetch(url + '?t=' + Date.now()); // evitar cache
+    const data = await r.json();
+    const { persones } = data;
+
+    preview.innerHTML = '';
+    persones.forEach(p => {
+      const div = document.createElement('div');
+      div.className = 'person-mini';
+      const dot = p.genere === 'home' ? '🔵' : p.genere === 'dona' ? '🔴' : '⚫';
+      div.innerHTML = `<strong>${dot} ${p.nom} ${p.cognoms || ''}</strong><span>ID: ${p.id}</span>`;
+      preview.appendChild(div);
+    });
+
+    // Suggereix pròxim ID
+    const nums = persones.map(p => parseInt(p.id.replace('p',''))).filter(n => !isNaN(n));
+    const next = Math.max(...nums) + 1;
+    document.getElementById('prox-id').textContent = `Pròxim ID disponible: p${next}`;
+
+    // Actualitza plantilla amb el pròxim ID
+    const tmpl = document.getElementById('plantilla-json');
+    tmpl.textContent = tmpl.textContent.replace('"p21"', `"p${next}"`);
+
+  } catch (e) {
+    preview.innerHTML = `<p style="color:#c00;font-size:.82rem">No s'ha pogut carregar familia.json (${e.message})</p>`;
+  }
+}
+
+loadPersones();
+</script>
+</body>
+</html>

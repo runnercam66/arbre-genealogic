@@ -1,0 +1,133 @@
+{
+  "persones": [
+    {
+      "id": "p01", "nom": "Joaquin",    "cognom1": "Castel",      "cognom2": "Artiga",
+      "genere": "home", "ofici": null, "llocs": [],
+      "data_naix": null, "lloc_naix": null, "data_mort": null, "lloc_mort": null,
+      "foto_url": null, "notes": null, "pare_id": null, "mare_id": null
+    },
+    {
+      "id": "p02", "nom": "Trinidad",   "cognom1": "Riba",        "cognom2": "Mur",
+      "genere": "dona", "ofici": null, "llocs": [],
+      "data_naix": null, "lloc_naix": null, "data_mort": null, "lloc_mort": null,
+      "foto_url": null, "notes": null, "pare_id": null, "mare_id": null
+    },
+    {
+      "id": "p03", "nom": "Asunción",   "cognom1": "Castel",      "cognom2": "Riba",
+      "genere": "dona", "ofici": null, "llocs": [],
+      "data_naix": null, "lloc_naix": null, "data_mort": null, "lloc_mort": null,
+      "foto_url": null, "notes": null, "pare_id": "p01", "mare_id": "p02"
+    },
+    {
+      "id": "p04", "nom": "Ricardo",    "cognom1": "Mur",         "cognom2": null,
+      "genere": "home", "ofici": null, "llocs": [],
+      "data_naix": null, "lloc_naix": null, "data_mort": null, "lloc_mort": null,
+      "foto_url": null, "notes": null, "pare_id": null, "mare_id": null
+    },
+    {
+      "id": "p05", "nom": "Maria José", "cognom1": "Castel",      "cognom2": "Riba",
+      "genere": "dona", "ofici": null, "llocs": [],
+      "data_naix": null, "lloc_naix": null, "data_mort": null, "lloc_mort": null,
+      "foto_url": null, "notes": null, "pare_id": "p01", "mare_id": "p02"
+    },
+    {
+      "id": "p06", "nom": "Álvaro",     "cognom1": "Ballesteros", "cognom2": null,
+      "genere": "home", "ofici": null, "llocs": [],
+      "data_naix": null, "lloc_naix": null, "data_mort": null, "lloc_mort": null,
+      "foto_url": null, "notes": null, "pare_id": null, "mare_id": null
+    },
+    {
+      "id": "p07", "nom": "Trinidad",   "cognom1": "Castel",      "cognom2": "Riba",
+      "genere": "dona", "ofici": null, "llocs": [],
+      "data_naix": null, "lloc_naix": null, "data_mort": null, "lloc_mort": null,
+      "foto_url": null, "notes": null, "pare_id": "p01", "mare_id": "p02"
+    },
+    {
+      "id": "p08", "nom": "Ricardo",    "cognom1": "Santamaria",  "cognom2": "Ariño",
+      "genere": "home", "ofici": null, "llocs": [],
+      "data_naix": null, "lloc_naix": null, "data_mort": null, "lloc_mort": null,
+      "foto_url": null, "notes": null, "pare_id": null, "mare_id": null
+    },
+    {
+      "id": "p09", "nom": "Raul",       "cognom1": "Mur",         "cognom2": "Castel",
+      "genere": "home", "ofici": null, "llocs": [],
+      "data_naix": null, "lloc_naix": null, "data_mort": null, "lloc_mort": null,
+      "foto_url": null, "notes": null, "pare_id": "p04", "mare_id": "p03"
+    },
+    {
+      "id": "p10", "nom": "Jesús",      "cognom1": "Mur",         "cognom2": "Castel",
+      "genere": "home", "ofici": null, "llocs": [],
+      "data_naix": null, "lloc_naix": null, "data_mort": null, "lloc_mort": null,
+      "foto_url": null, "notes": null, "pare_id": "p04", "mare_id": "p03"
+    },
+    {
+      "id": "p11", "nom": "Olga",       "cognom1": "Ballestero",  "cognom2": "Castel",
+      "genere": "dona", "ofici": null, "llocs": [],
+      "data_naix": null, "lloc_naix": null, "data_mort": null, "lloc_mort": null,
+      "foto_url": null, "notes": null, "pare_id": "p06", "mare_id": "p05"
+    },
+    {
+      "id": "p12", "nom": "Joan",       "cognom1": "Cot",         "cognom2": null,
+      "genere": "home", "ofici": null, "llocs": [],
+      "data_naix": null, "lloc_naix": null, "data_mort": null, "lloc_mort": null,
+      "foto_url": null, "notes": null, "pare_id": null, "mare_id": null
+    },
+    {
+      "id": "p13", "nom": "Ricard",     "cognom1": "Santamaria",  "cognom2": "Castel",
+      "genere": "home", "ofici": null, "llocs": [],
+      "data_naix": null, "lloc_naix": null, "data_mort": null, "lloc_mort": null,
+      "foto_url": null, "notes": "Administrador de l'arbre", "pare_id": "p08", "mare_id": "p07"
+    },
+    {
+      "id": "p14", "nom": "Sonia",      "cognom1": "Velasco",     "cognom2": "Menal",
+      "genere": "dona", "ofici": null, "llocs": [],
+      "data_naix": null, "lloc_naix": null, "data_mort": null, "lloc_mort": null,
+      "foto_url": null, "notes": null, "pare_id": null, "mare_id": null
+    },
+    {
+      "id": "p15", "nom": "Marisa",     "cognom1": "Santamaria",  "cognom2": "Castel",
+      "genere": "dona", "ofici": null, "llocs": [],
+      "data_naix": null, "lloc_naix": null, "data_mort": null, "lloc_mort": null,
+      "foto_url": null, "notes": null, "pare_id": "p08", "mare_id": "p07"
+    },
+    {
+      "id": "p16", "nom": "Carlos",     "cognom1": "Cano",        "cognom2": null,
+      "genere": "home", "ofici": null, "llocs": [],
+      "data_naix": null, "lloc_naix": null, "data_mort": null, "lloc_mort": null,
+      "foto_url": null, "notes": null, "pare_id": null, "mare_id": null
+    },
+    {
+      "id": "p17", "nom": "Joan",       "cognom1": "Cot",         "cognom2": "Ballestero",
+      "genere": "home", "ofici": null, "llocs": [],
+      "data_naix": null, "lloc_naix": null, "data_mort": null, "lloc_mort": null,
+      "foto_url": null, "notes": null, "pare_id": "p12", "mare_id": "p11"
+    },
+    {
+      "id": "p18", "nom": "Victor",     "cognom1": "Cot",         "cognom2": "Ballestero",
+      "genere": "home", "ofici": null, "llocs": [],
+      "data_naix": null, "lloc_naix": null, "data_mort": null, "lloc_mort": null,
+      "foto_url": null, "notes": null, "pare_id": "p12", "mare_id": "p11"
+    },
+    {
+      "id": "p19", "nom": "Claudia",    "cognom1": "Santamaria",  "cognom2": "Velasco",
+      "genere": "dona", "ofici": null, "llocs": [],
+      "data_naix": null, "lloc_naix": null, "data_mort": null, "lloc_mort": null,
+      "foto_url": null, "notes": null, "pare_id": "p13", "mare_id": "p14"
+    },
+    {
+      "id": "p20", "nom": "Arlet",      "cognom1": "Santamaria",  "cognom2": "Velasco",
+      "genere": "dona", "ofici": null, "llocs": [],
+      "data_naix": null, "lloc_naix": null, "data_mort": null, "lloc_mort": null,
+      "foto_url": null, "notes": null, "pare_id": "p13", "mare_id": "p14"
+    }
+  ],
+  "unions": [
+    { "id": "u01", "persona1_id": "p01", "persona2_id": "p02" },
+    { "id": "u02", "persona1_id": "p03", "persona2_id": "p04" },
+    { "id": "u03", "persona1_id": "p05", "persona2_id": "p06" },
+    { "id": "u04", "persona1_id": "p07", "persona2_id": "p08" },
+    { "id": "u05", "persona1_id": "p11", "persona2_id": "p12" },
+    { "id": "u06", "persona1_id": "p13", "persona2_id": "p14" },
+    { "id": "u07", "persona1_id": "p15", "persona2_id": "p16" }
+  ]
+}
