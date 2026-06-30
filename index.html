@@ -240,7 +240,7 @@
       <div class="ef-field"><label>Notes</label><textarea id="e-notes"></textarea></div>
       <div class="edit-actions">
         <button class="btn-cancel-edit" onclick="toggleEdit()">Cancel·lar</button>
-        <button class="btn-save" onclick="saveEdit()">💾 Desar i descarregar JSON</button>
+        <button class="btn-save" onclick="saveEdit()">💾 Desar a GitHub</button>
       </div>
       <div id="save-ok">✅ familia.json descarregat! Puja'l a GitHub per actualitzar l'arbre.</div>
     </div>
@@ -437,9 +437,8 @@ function makeCard(p,maps){
   return card;
 }
 
-// ── LÍNIES ───────────────────────────────────────────────────
+// ── LÍNIES EN ANGLE RECTE ────────────────────────────────────
 function drawLines(persones,maps,gen){
-  const{byId}=maps;
   const wrap=document.getElementById('tree-wrap');
   const svg=document.getElementById('svg-lines');
   const wRect=wrap.getBoundingClientRect();
@@ -449,37 +448,66 @@ function drawLines(persones,maps,gen){
     if(!el) return null;
     const r=el.getBoundingClientRect();
     const x=r.left-wRect.left, y=r.top-wRect.top;
-    return{x,y,w:r.width,h:r.height,cx:x+r.width/2,top:y,bot:y+r.height};
+    return{x,y,w:r.width,h:r.height,cx:x+r.width/2,top:y,bot:y+r.height,mid:y+r.height/2};
+  }
+
+  function seg(x1,y1,x2,y2,cls){
+    const l=document.createElementNS('http://www.w3.org/2000/svg','line');
+    l.setAttribute('x1',x1);l.setAttribute('y1',y1);
+    l.setAttribute('x2',x2);l.setAttribute('y2',y2);
+    l.setAttribute('class',cls||'line-child');
+    svg.appendChild(l);
   }
 
   svg.setAttribute('width',wrap.scrollWidth);
   svg.setAttribute('height',wrap.scrollHeight);
 
-  // Línies de parella (horitzontal)
+  // 1. Línies de parella (horitzontal al mig de les targetes)
   (window._data.unions||[]).forEach(u=>{
     if(gen[u.persona1_id]!==gen[u.persona2_id]) return;
     const r1=pos(u.persona1_id),r2=pos(u.persona2_id);
     if(!r1||!r2) return;
-    const midY=r1.top+r1.h/2;
+    const midY=r1.mid;
     const lx1=Math.min(r1.x+r1.w,r2.x+r2.w), lx2=Math.max(r1.x,r2.x);
-    const l=document.createElementNS('http://www.w3.org/2000/svg','line');
-    l.setAttribute('x1',lx1);l.setAttribute('y1',midY);
-    l.setAttribute('x2',lx2);l.setAttribute('y2',midY);
-    l.setAttribute('class','line-couple'); svg.appendChild(l);
+    seg(lx1,midY,lx2,midY,'line-couple');
   });
 
-  // Línies pare/mare → fill
+  // 2. Brackets pares → fills (agrupa germans sota els seus pares)
+  const grups={};
   persones.forEach(child=>{
-    const pIds=[child.pare_id,child.mare_id].filter(id=>id&&byId[id]);
-    if(!pIds.length) return;
-    const rc=pos(child.id); if(!rc) return;
-    const prects=pIds.map(pos).filter(Boolean); if(!prects.length) return;
-    const px=prects.reduce((s,r)=>s+r.cx,0)/prects.length;
-    const py=Math.max(...prects.map(r=>r.bot));
-    const mid=(py+rc.top)/2;
-    const path=document.createElementNS('http://www.w3.org/2000/svg','path');
-    path.setAttribute('d',`M ${px} ${py} C ${px} ${mid}, ${rc.cx} ${mid}, ${rc.cx} ${rc.top}`);
-    path.setAttribute('class','line-child'); svg.appendChild(path);
+    const pids=[child.pare_id,child.mare_id].filter(Boolean);
+    if(!pids.length) return;
+    const key=pids.slice().sort().join('|');
+    if(!grups[key]) grups[key]={pids,kids:[]};
+    grups[key].kids.push(child.id);
+  });
+
+  Object.values(grups).forEach(({pids,kids})=>{
+    const pRects=pids.map(pos).filter(Boolean);
+    const kRects=kids.map(id=>pos(id)).filter(Boolean);
+    if(!pRects.length||!kRects.length) return;
+
+    // Punt de sortida: centre horitzontal dels pares, sota les seves targetes
+    const midX=pRects.reduce((s,r)=>s+r.cx,0)/pRects.length;
+    const fromY=Math.max(...pRects.map(r=>r.bot));
+    const toY=Math.min(...kRects.map(r=>r.top));
+    // Punt de bifurcació (junction) a ~40% del espai entre files
+    const jY=fromY+(toY-fromY)*0.4;
+
+    // Línia vertical des dels pares fins la bifurcació
+    seg(midX,fromY,midX,jY);
+
+    if(kRects.length===1){
+      // Fill únic: línia en L si cal, recta si coincideix
+      if(Math.abs(kRects[0].cx-midX)>3) seg(midX,jY,kRects[0].cx,jY);
+      seg(kRects[0].cx,jY,kRects[0].cx,kRects[0].top);
+    } else {
+      // Múltiples fills: barra horitzontal + línies verticals cap a cada fill
+      const lx=Math.min(...kRects.map(r=>r.cx));
+      const rx=Math.max(...kRects.map(r=>r.cx));
+      seg(lx,jY,rx,jY); // barra horitzontal de germans
+      kRects.forEach(r=>seg(r.cx,jY,r.cx,r.top)); // línia a cada fill
+    }
   });
 }
 
@@ -589,16 +617,9 @@ function saveEdit(){
   p.pare_id=document.getElementById('e-pare').value||null;
   p.mare_id=document.getElementById('e-mare').value||null;
 
-  downloadJSON();
-  document.getElementById('save-ok').style.display='block';
-
-  // Refresca la targeta al tree
   renderTree(window._data);
-  // Torna a obrir el modal amb les dades actualitzades
-  setTimeout(()=>{
-    const maps=buildMaps(window._data);
-    openModal(p,maps);
-  },100);
+  setTimeout(()=>{ const maps=buildMaps(window._data); openModal(p,maps); },100);
+  saveToGitHub();
 }
 
 // ── AFEGIR NOVA PERSONA ──────────────────────────────────────
@@ -631,10 +652,57 @@ function openAddModal(){
   document.getElementById('save-ok').style.display='none';
 }
 
-// ── DESCARREGAR JSON ─────────────────────────────────────────
-function downloadJSON(){
-  const blob=new Blob([JSON.stringify(window._data,null,2)],{type:'application/json'});
-  const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='familia.json'; a.click();
+// ── GITHUB API: AUTO-DESAR ────────────────────────────────────
+function getToken(){
+  let tok=localStorage.getItem('gh_token');
+  if(!tok){
+    tok=prompt('🔑 Introdueix el teu GitHub Personal Access Token\n(es guardarà al navegador, no al codi):');
+    if(tok) localStorage.setItem('gh_token',tok.trim());
+  }
+  return tok;
+}
+
+async function saveToGitHub(){
+  const okEl=document.getElementById('save-ok');
+  okEl.style.display='block'; okEl.style.color='#a07830'; okEl.textContent='⏳ Desant a GitHub…';
+
+  const token=getToken();
+  if(!token){ okEl.style.color='#c00'; okEl.textContent='❌ Cal un token per desar.'; return; }
+
+  const repo=typeof GITHUB_REPO!=='undefined'?GITHUB_REPO:'runnercam66/arbre-genealogic';
+  const file=typeof GITHUB_FILE!=='undefined'?GITHUB_FILE:'familia.json';
+  const branch=typeof GITHUB_BRANCH!=='undefined'?GITHUB_BRANCH:'main';
+  const apiUrl=`https://api.github.com/repos/${repo}/contents/${file}`;
+  const headers={'Authorization':'token '+token,'Content-Type':'application/json'};
+
+  try{
+    // Obté el SHA actual del fitxer
+    const res=await fetch(apiUrl+'?ref='+branch,{headers});
+    if(res.status===401){ localStorage.removeItem('gh_token'); throw new Error('Token invàlid'); }
+    if(!res.ok) throw new Error('HTTP '+res.status);
+    const current=await res.json();
+
+    // Codifica el contingut en Base64
+    const content=btoa(unescape(encodeURIComponent(JSON.stringify(window._data,null,2))));
+
+    const upd=await fetch(apiUrl,{
+      method:'PUT', headers,
+      body:JSON.stringify({
+        message:'Actualitza familia.json des de l\'arbre',
+        content, sha:current.sha, branch
+      })
+    });
+    if(!upd.ok) throw new Error('Error en desar: '+upd.status);
+
+    okEl.style.color='#2e7d32';
+    okEl.textContent='✅ Desat a GitHub! L\'arbre s\'actualitzarà en uns segons.';
+  }catch(e){
+    okEl.style.color='#c00';
+    okEl.textContent='❌ Error: '+e.message;
+    // Fallback: descarrega el JSON manualment
+    const blob=new Blob([JSON.stringify(window._data,null,2)],{type:'application/json'});
+    const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='familia.json'; a.click();
+  }
 }
 
 // ── PAN ──────────────────────────────────────────────────────
