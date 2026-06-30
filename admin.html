@@ -193,7 +193,8 @@ async function loadPersones() {
       const div = document.createElement('div');
       div.className = 'person-mini';
       const dot = p.genere === 'home' ? '🔵' : p.genere === 'dona' ? '🔴' : '⚫';
-      div.innerHTML = `<strong>${dot} ${p.nom} ${p.cognoms || ''}</strong><span>ID: ${p.id}</span>`;
+      const cogn=[p.cognom1,p.cognom2].filter(Boolean).join(' ');
+      div.innerHTML = `<strong>${dot} ${p.nom} ${cogn}</strong><span>ID: ${p.id}</span>`;
       preview.appendChild(div);
     });
 
