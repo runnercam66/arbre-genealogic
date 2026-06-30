@@ -405,6 +405,7 @@ function computeLayout(data,maps,genMap){
 
   const placed=new Set();
   const xPos={},yPos={};
+  const placedBy={}; // fill_id → "pare_id|mare_id" del parell que l'ha col·locat
 
   function place(pid,cx){
     if(placed.has(pid)) return;
@@ -417,15 +418,18 @@ function computeLayout(data,maps,genMap){
       yPos[pid2]=rowY;
       xPos[pid]=cx-COUPLE_W/2;               // membre esquerra
       xPos[pid2]=cx-COUPLE_W/2+CW+CG+HW+CG;  // membre dreta
-    } else if(!placed.has(pid)||xPos[pid]===undefined){
+    } else if(xPos[pid]===undefined){
       xPos[pid]=cx-CW/2;
     }
     const kids=primaryKids(pid).filter(id=>!placed.has(id));
     if(!kids.length) return;
+    // clau del parell que col·loca: iguals que la clau de drawLines
+    const parentKey=[pid,pid2].filter(Boolean).sort().join('|');
     const ws=kids.map(id=>subtreeW(id));
     const total=ws.reduce((s,w)=>s+w,0)+FG*(kids.length-1);
     let kx=cx-total/2;
     kids.forEach((id,i)=>{
+      placedBy[id]=parentKey;
       place(id,kx+ws[i]/2);
       kx+=ws[i]+FG;
     });
@@ -459,7 +463,7 @@ function computeLayout(data,maps,genMap){
     }
   });
 
-  return{xPos,yPos};
+  return{xPos,yPos,placedBy};
 }
 
 // ── RENDER ───────────────────────────────────────────────────
@@ -474,8 +478,8 @@ function renderTree(data){
   const gen=assignGen(persones,maps);
   window._maps=maps; window._gen=gen;
 
-  const{xPos,yPos}=computeLayout(data,maps,gen);
-  window._xPos=xPos; window._yPos=yPos;
+  const{xPos,yPos,placedBy}=computeLayout(data,maps,gen);
+  window._xPos=xPos; window._yPos=yPos; window._placedBy=placedBy;
 
   const maxGen=Math.max(...Object.values(gen));
   const maxX=Math.max(...Object.values(xPos))+CW+80;
@@ -586,13 +590,16 @@ function drawLines(persones,maps,gen){
     const pids=[child.pare_id,child.mare_id].filter(Boolean);
     if(!pids.length) return;
     const key=pids.slice().sort().join('|');
-    if(!grups[key]) grups[key]={pids,kids:[]};
+    if(!grups[key]) grups[key]={pids,kids:[],key};
     grups[key].kids.push(child.id);
   });
 
-  Object.values(grups).forEach(({pids,kids})=>{
+  Object.values(grups).forEach(({pids,kids,key})=>{
+    // Només dibuixem línies als fills que van ser col·locats per AQUEST parell de pares
+    // (evita línies lleges quan un fill ha estat col·locat com a parella d'algú altre)
+    const filteredKids=kids.filter(id=>window._placedBy[id]===key);
     const pRects=pids.map(pos).filter(Boolean);
-    const kRects=kids.map(id=>pos(id)).filter(Boolean);
+    const kRects=filteredKids.map(id=>pos(id)).filter(Boolean);
     if(!pRects.length||!kRects.length) return;
     const midX=pRects.reduce((s,r)=>s+r.cx,0)/pRects.length;
     const fromY=Math.max(...pRects.map(r=>r.bot));

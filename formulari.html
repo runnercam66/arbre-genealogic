@@ -45,7 +45,11 @@
   .parentesco-row select { width: auto; flex-shrink: 0; }
   .parentesco-row input  { flex: 1; min-width: 160px; }
 
-  .mort-toggle { display: flex; align-items: center; gap: 8px; font-size: .83rem; cursor: pointer; color: #666; margin-bottom: 10px; }
+  .viu-toggle { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; font-size: .83rem; color: #555; flex-wrap: wrap; }
+  .viu-toggle > span { font-weight: bold; }
+  .viu-opt { display: flex; align-items: center; gap: 5px; cursor: pointer; padding: 5px 13px; border-radius: 20px; border: 1.5px solid var(--border); background: #fff; transition: background .12s, border-color .12s; }
+  .viu-opt:has(input:checked) { background: #e8f5e9; border-color: #4caf50; color: #2e7d32; font-weight: bold; }
+  .viu-opt input { display: none; }
   #mort-fields { display: none; }
 
   .foto-box {
@@ -128,16 +132,23 @@
         </div>
       </div>
 
+      <div class="viu-toggle">
+        <span id="l-estat">Estat:</span>
+        <label class="viu-opt">
+          <input type="radio" name="estat_vital" value="viu" id="r-viu" checked onchange="toggleMort()">
+          <span id="l-viu-opt">Viu/a ✓</span>
+        </label>
+        <label class="viu-opt">
+          <input type="radio" name="estat_vital" value="mort" id="r-mort" onchange="toggleMort()">
+          <span id="l-mort-opt">Difunt/a ✗</span>
+        </label>
+      </div>
+
       <div class="field">
-        <label id="l-llocs">Llocs on va viure</label>
+        <label id="l-llocs">Llocs on ha viscut / on viu</label>
         <input type="text" name="llocs_viscuts" placeholder="ex: Saragossa, Barcelona, Lleida…">
         <p class="hint" id="hint-llocs">Separa els llocs amb comes</p>
       </div>
-
-      <label class="mort-toggle">
-        <input type="checkbox" id="chk-mort" onchange="toggleMort()">
-        <span id="l-mort-chk">Ja ha mort</span>
-      </label>
       <div id="mort-fields">
         <div class="row2">
           <div class="field">
@@ -241,8 +252,9 @@ const T = {
     dades:'Dades personals', rel:'Vincle familiar', foto:'Foto', notes:'Altres dades', tu:'Qui fas la proposta?',
     nom:'Nom', cog1:'1r cognom', cog2:'2n cognom', gen:'Gènere', ofici:'Ofici / Professió',
     naix:'Data de naixement', lloc_naix:'Lloc de naixement',
-    llocs:'Llocs on va viure', hint_llocs:'Separa els llocs amb comes',
-    mort_chk:'Ja ha mort', data_mort:'Data de defunció', lloc_mort:'Lloc de defunció',
+    llocs_viu:'Llocs on ha viscut / on viu', llocs_mort:'Llocs on va viure', hint_llocs:'Separa els llocs amb comes',
+    estat:'Estat:', viu_opt:'Viu/a ✓', mort_opt:'Difunt/a ✗',
+    data_mort:'Data de defunció', lloc_mort:'Lloc de defunció',
     hint_rel_intro:'Indica com es relaciona aquesta persona amb algú que ja és a l\'arbre.',
     parentesco:'Aquesta persona és…', de:'de',
     hint_parentesco:'Escriu el nom complet de la persona existent a l\'arbre',
@@ -268,8 +280,9 @@ const T = {
     dades:'Datos personales', rel:'Vínculo familiar', foto:'Foto', notes:'Otros datos', tu:'¿Quién hace la propuesta?',
     nom:'Nombre', cog1:'1er apellido', cog2:'2do apellido', gen:'Género', ofici:'Oficio / Profesión',
     naix:'Fecha de nacimiento', lloc_naix:'Lugar de nacimiento',
-    llocs:'Lugares donde vivió', hint_llocs:'Separa los lugares con comas',
-    mort_chk:'Ya ha fallecido', data_mort:'Fecha de defunción', lloc_mort:'Lugar de defunción',
+    llocs_viu:'Lugares donde ha vivido / donde vive', llocs_mort:'Lugares donde vivió', hint_llocs:'Separa los lugares con comas',
+    estat:'Estado:', viu_opt:'Vivo/a ✓', mort_opt:'Fallecido/a ✗',
+    data_mort:'Fecha de defunción', lloc_mort:'Lugar de defunción',
     hint_rel_intro:'Indica cómo se relaciona esta persona con alguien que ya está en el árbol.',
     parentesco:'Esta persona es…', de:'de',
     hint_parentesco:'Escribe el nombre completo de la persona existente en el árbol',
@@ -310,7 +323,9 @@ function applyLang() {
   document.getElementById('l-lloc-naix').textContent = t.lloc_naix;
   document.getElementById('l-llocs').textContent = t.llocs;
   document.getElementById('hint-llocs').textContent = t.hint_llocs;
-  document.getElementById('l-mort-chk').textContent = t.mort_chk;
+  document.getElementById('l-estat').textContent = t.estat;
+  document.getElementById('l-viu-opt').textContent = t.viu_opt;
+  document.getElementById('l-mort-opt').textContent = t.mort_opt;
   document.getElementById('l-data-mort').textContent = t.data_mort;
   document.getElementById('l-lloc-mort').textContent = t.lloc_mort;
   document.getElementById('hint-rel-intro').textContent = t.hint_rel_intro;
@@ -346,8 +361,13 @@ function applyLang() {
   }
 }
 
-function toggleLang() { lang = lang === 'ca' ? 'es' : 'ca'; localStorage.setItem('lang',lang); applyLang(); }
-function toggleMort() { document.getElementById('mort-fields').style.display = document.getElementById('chk-mort').checked ? 'block' : 'none'; }
+function toggleLang() { lang = lang === 'ca' ? 'es' : 'ca'; localStorage.setItem('lang',lang); applyLang(); toggleMort(); }
+function toggleMort() {
+  const isDead = document.getElementById('r-mort').checked;
+  document.getElementById('mort-fields').style.display = isDead ? 'block' : 'none';
+  const t = T[lang];
+  document.getElementById('l-llocs').textContent = isDead ? t.llocs_mort : t.llocs_viu;
+}
 function previewFoto(input) {
   const file = input.files[0]; if (!file) return;
   const reader = new FileReader();
