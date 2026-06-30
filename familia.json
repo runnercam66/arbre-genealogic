@@ -1,124 +1,290 @@
 {
   "persones": [
     {
-      "id": "p01", "nom": "Joaquin",    "cognom1": "Castel",      "cognom2": "Artiga",
+      "id": "p01", "nom": "Joaquin", "cognom1": "Castel", "cognom2": "Artiga",
       "genere": "home", "ofici": null, "llocs": [],
       "data_naix": null, "lloc_naix": null, "data_mort": null, "lloc_mort": null,
       "foto_url": null, "notes": null, "pare_id": null, "mare_id": null
     },
     {
-      "id": "p02", "nom": "Trinidad",   "cognom1": "Riba",        "cognom2": "Mur",
+      "id": "p02", "nom": "Trinidad", "cognom1": "Riba", "cognom2": "Mur",
       "genere": "dona", "ofici": null, "llocs": [],
-      "data_naix": null, "lloc_naix": null, "data_mort": null, "lloc_mort": null,
+      "data_naix": null, "lloc_naix": "Castejón de Sos", "data_mort": null, "lloc_mort": null,
       "foto_url": null, "notes": null, "pare_id": null, "mare_id": null
     },
     {
-      "id": "p03", "nom": "Asunción",   "cognom1": "Castel",      "cognom2": "Riba",
+      "id": "p03", "nom": "Asunción", "cognom1": "Castel", "cognom2": "Riba",
       "genere": "dona", "ofici": null, "llocs": [],
-      "data_naix": null, "lloc_naix": null, "data_mort": null, "lloc_mort": null,
-      "foto_url": null, "notes": null, "pare_id": "p01", "mare_id": "p02"
+      "data_naix": "1930-09-20", "lloc_naix": "Chia (Casa Vidal)", "data_mort": null, "lloc_mort": null,
+      "foto_url": null, "notes": "Madrina de Ricard. Va néixer a Casa Vidal de Chia.", "pare_id": "p01", "mare_id": "p02"
     },
     {
-      "id": "p04", "nom": "Ricardo",    "cognom1": "Mur",         "cognom2": null,
+      "id": "p04", "nom": "Ricardo", "cognom1": "Mur", "cognom2": null,
       "genere": "home", "ofici": null, "llocs": [],
-      "data_naix": null, "lloc_naix": null, "data_mort": null, "lloc_mort": null,
-      "foto_url": null, "notes": null, "pare_id": null, "mare_id": null
+      "data_naix": null, "lloc_naix": "Chia (Casa Ramonot)", "data_mort": null, "lloc_mort": null,
+      "foto_url": null, "notes": "De Casa Ramonot de Chía.", "pare_id": null, "mare_id": null
     },
     {
-      "id": "p05", "nom": "Maria José", "cognom1": "Castel",      "cognom2": "Riba",
-      "genere": "dona", "ofici": null, "llocs": [],
-      "data_naix": null, "lloc_naix": null, "data_mort": null, "lloc_mort": null,
-      "foto_url": null, "notes": null, "pare_id": "p01", "mare_id": "p02"
-    },
-    {
-      "id": "p06", "nom": "Álvaro",     "cognom1": "Ballesteros", "cognom2": null,
-      "genere": "home", "ofici": null, "llocs": [],
-      "data_naix": null, "lloc_naix": null, "data_mort": null, "lloc_mort": null,
-      "foto_url": null, "notes": null, "pare_id": null, "mare_id": null
-    },
-    {
-      "id": "p07", "nom": "Trinidad",   "cognom1": "Castel",      "cognom2": "Riba",
+      "id": "p05", "nom": "Maria José", "cognom1": "Castel", "cognom2": "Riba",
       "genere": "dona", "ofici": null, "llocs": [],
       "data_naix": null, "lloc_naix": null, "data_mort": null, "lloc_mort": null,
       "foto_url": null, "notes": null, "pare_id": "p01", "mare_id": "p02"
     },
     {
-      "id": "p08", "nom": "Ricardo",    "cognom1": "Santamaria",  "cognom2": "Ariño",
+      "id": "p06", "nom": "Álvaro", "cognom1": "Ballesteros", "cognom2": null,
       "genere": "home", "ofici": null, "llocs": [],
       "data_naix": null, "lloc_naix": null, "data_mort": null, "lloc_mort": null,
       "foto_url": null, "notes": null, "pare_id": null, "mare_id": null
     },
     {
-      "id": "p09", "nom": "Raul",       "cognom1": "Mur",         "cognom2": "Castel",
+      "id": "p07", "nom": "Trinidad", "cognom1": "Castel", "cognom2": "Riba",
+      "genere": "dona", "ofici": null, "llocs": [],
+      "data_naix": null, "lloc_naix": null, "data_mort": null, "lloc_mort": null,
+      "foto_url": null, "notes": null, "pare_id": "p01", "mare_id": "p02"
+    },
+    {
+      "id": "p08", "nom": "Ricardo", "cognom1": "Santamaria", "cognom2": "Ariño",
       "genere": "home", "ofici": null, "llocs": [],
       "data_naix": null, "lloc_naix": null, "data_mort": null, "lloc_mort": null,
+      "foto_url": null, "notes": "Fill de Bartolomé Santamaria Barrabés i Dolores Ariño.", "pare_id": "p21", "mare_id": "p22"
+    },
+    {
+      "id": "p09", "nom": "Raul", "cognom1": "Mur", "cognom2": "Castel",
+      "genere": "home", "ofici": null, "llocs": [],
+      "data_naix": null, "lloc_naix": null, "data_mort": "1993-08-15", "lloc_mort": "Ainsa",
+      "foto_url": null, "notes": "Va morir en un accident de cotxe tornant d'Ainsa el 15 d'agost de 1993.", "pare_id": "p04", "mare_id": "p03"
+    },
+    {
+      "id": "p10", "nom": "Jesús", "cognom1": "Mur", "cognom2": "Castel",
+      "genere": "home", "ofici": null, "llocs": [],
+      "data_naix": "1972-01-03", "lloc_naix": null, "data_mort": "2023-01-11", "lloc_mort": null,
       "foto_url": null, "notes": null, "pare_id": "p04", "mare_id": "p03"
     },
     {
-      "id": "p10", "nom": "Jesús",      "cognom1": "Mur",         "cognom2": "Castel",
-      "genere": "home", "ofici": null, "llocs": [],
-      "data_naix": null, "lloc_naix": null, "data_mort": null, "lloc_mort": null,
-      "foto_url": null, "notes": null, "pare_id": "p04", "mare_id": "p03"
-    },
-    {
-      "id": "p11", "nom": "Olga",       "cognom1": "Ballestero",  "cognom2": "Castel",
+      "id": "p11", "nom": "Olga", "cognom1": "Ballestero", "cognom2": "Castel",
       "genere": "dona", "ofici": null, "llocs": [],
       "data_naix": null, "lloc_naix": null, "data_mort": null, "lloc_mort": null,
       "foto_url": null, "notes": null, "pare_id": "p06", "mare_id": "p05"
     },
     {
-      "id": "p12", "nom": "Joan",       "cognom1": "Cot",         "cognom2": null,
+      "id": "p12", "nom": "Joan", "cognom1": "Cot", "cognom2": null,
       "genere": "home", "ofici": null, "llocs": [],
       "data_naix": null, "lloc_naix": null, "data_mort": null, "lloc_mort": null,
       "foto_url": null, "notes": null, "pare_id": null, "mare_id": null
     },
     {
-      "id": "p13", "nom": "Ricard",     "cognom1": "Santamaria",  "cognom2": "Castel",
+      "id": "p13", "nom": "Ricard", "cognom1": "Santamaria", "cognom2": "Castel",
       "genere": "home", "ofici": null, "llocs": [],
       "data_naix": null, "lloc_naix": null, "data_mort": null, "lloc_mort": null,
-      "foto_url": null, "notes": "Administrador de l'arbre", "pare_id": "p08", "mare_id": "p07"
+      "foto_url": null, "notes": "Administrador de l'arbre.", "pare_id": "p08", "mare_id": "p07"
     },
     {
-      "id": "p14", "nom": "Sonia",      "cognom1": "Velasco",     "cognom2": "Menal",
+      "id": "p14", "nom": "Sonia", "cognom1": "Velasco", "cognom2": "Menal",
       "genere": "dona", "ofici": null, "llocs": [],
       "data_naix": null, "lloc_naix": null, "data_mort": null, "lloc_mort": null,
-      "foto_url": null, "notes": null, "pare_id": null, "mare_id": null
+      "foto_url": null, "notes": "Filla de Josep Velasco Ramirez i Francesca Menal Bendicho.", "pare_id": "p39", "mare_id": "p40"
     },
     {
-      "id": "p15", "nom": "Marisa",     "cognom1": "Santamaria",  "cognom2": "Castel",
+      "id": "p15", "nom": "Marisa", "cognom1": "Santamaria", "cognom2": "Castel",
       "genere": "dona", "ofici": null, "llocs": [],
       "data_naix": null, "lloc_naix": null, "data_mort": null, "lloc_mort": null,
       "foto_url": null, "notes": null, "pare_id": "p08", "mare_id": "p07"
     },
     {
-      "id": "p16", "nom": "Carlos",     "cognom1": "Cano",        "cognom2": null,
+      "id": "p16", "nom": "Carlos", "cognom1": "Cano", "cognom2": null,
       "genere": "home", "ofici": null, "llocs": [],
       "data_naix": null, "lloc_naix": null, "data_mort": null, "lloc_mort": null,
       "foto_url": null, "notes": null, "pare_id": null, "mare_id": null
     },
     {
-      "id": "p17", "nom": "Joan",       "cognom1": "Cot",         "cognom2": "Ballestero",
+      "id": "p17", "nom": "Joan", "cognom1": "Cot", "cognom2": "Ballestero",
       "genere": "home", "ofici": null, "llocs": [],
       "data_naix": null, "lloc_naix": null, "data_mort": null, "lloc_mort": null,
       "foto_url": null, "notes": null, "pare_id": "p12", "mare_id": "p11"
     },
     {
-      "id": "p18", "nom": "Victor",     "cognom1": "Cot",         "cognom2": "Ballestero",
+      "id": "p18", "nom": "Victor", "cognom1": "Cot", "cognom2": "Ballestero",
       "genere": "home", "ofici": null, "llocs": [],
       "data_naix": null, "lloc_naix": null, "data_mort": null, "lloc_mort": null,
       "foto_url": null, "notes": null, "pare_id": "p12", "mare_id": "p11"
     },
     {
-      "id": "p19", "nom": "Claudia",    "cognom1": "Santamaria",  "cognom2": "Velasco",
+      "id": "p19", "nom": "Claudia", "cognom1": "Santamaria", "cognom2": "Velasco",
       "genere": "dona", "ofici": null, "llocs": [],
       "data_naix": null, "lloc_naix": null, "data_mort": null, "lloc_mort": null,
       "foto_url": null, "notes": null, "pare_id": "p13", "mare_id": "p14"
     },
     {
-      "id": "p20", "nom": "Arlet",      "cognom1": "Santamaria",  "cognom2": "Velasco",
+      "id": "p20", "nom": "Arlet", "cognom1": "Santamaria", "cognom2": "Velasco",
       "genere": "dona", "ofici": null, "llocs": [],
       "data_naix": null, "lloc_naix": null, "data_mort": null, "lloc_mort": null,
       "foto_url": null, "notes": null, "pare_id": "p13", "mare_id": "p14"
+    },
+
+    { "id": "p21", "nom": "Bartolomé", "cognom1": "Santamaria", "cognom2": "Barrabés",
+      "genere": "home", "ofici": null, "llocs": [],
+      "data_naix": null, "lloc_naix": null, "data_mort": null, "lloc_mort": null,
+      "foto_url": null, "notes": "Avi patern de Ricard. Pare de Ricardo, Luis i Margarita Santamaria.", "pare_id": null, "mare_id": null
+    },
+    { "id": "p22", "nom": "Dolores", "cognom1": "Ariño", "cognom2": null,
+      "genere": "dona", "ofici": null, "llocs": [],
+      "data_naix": null, "lloc_naix": null, "data_mort": null, "lloc_mort": null,
+      "foto_url": null, "notes": "Àvia paterna de Ricard. Mare de Ricardo, Luis i Margarita Santamaria.", "pare_id": null, "mare_id": null
+    },
+    { "id": "p23", "nom": "Luis", "cognom1": "Santamaria", "cognom2": "Ariño",
+      "genere": "home", "ofici": null, "llocs": [],
+      "data_naix": null, "lloc_naix": null, "data_mort": null, "lloc_mort": null,
+      "foto_url": null, "notes": "Germà de Ricardo Santamaria (p08).", "pare_id": "p21", "mare_id": "p22"
+    },
+    { "id": "p24", "nom": "Carmen", "cognom1": "Nogueira", "cognom2": null,
+      "genere": "dona", "ofici": null, "llocs": [],
+      "data_naix": null, "lloc_naix": null, "data_mort": null, "lloc_mort": null,
+      "foto_url": null, "notes": null, "pare_id": null, "mare_id": null
+    },
+    { "id": "p25", "nom": "Cristina", "cognom1": "Santamaria", "cognom2": "Nogueira",
+      "genere": "dona", "ofici": null, "llocs": [],
+      "data_naix": null, "lloc_naix": null, "data_mort": null, "lloc_mort": null,
+      "foto_url": null, "notes": "Filla de Luis Santamaria i Carmen Nogueira.", "pare_id": "p23", "mare_id": "p24"
+    },
+    { "id": "p26", "nom": "Ona", "cognom1": null, "cognom2": null,
+      "genere": "dona", "ofici": null, "llocs": [],
+      "data_naix": null, "lloc_naix": null, "data_mort": null, "lloc_mort": null,
+      "foto_url": null, "notes": "Filla de Cristina Santamaria Nogueira.", "pare_id": null, "mare_id": "p25"
+    },
+    { "id": "p27", "nom": "Margarita", "cognom1": "Santamaria", "cognom2": "Ariño",
+      "genere": "dona", "ofici": null, "llocs": [],
+      "data_naix": null, "lloc_naix": null, "data_mort": null, "lloc_mort": null,
+      "foto_url": null, "notes": "Germana de Ricardo Santamaria (p08).", "pare_id": "p21", "mare_id": "p22"
+    },
+    { "id": "p28", "nom": "Fernando", "cognom1": "Echevarne", "cognom2": "Florence",
+      "genere": "home", "ofici": null, "llocs": [],
+      "data_naix": null, "lloc_naix": null, "data_mort": null, "lloc_mort": null,
+      "foto_url": null, "notes": "Espós de Margarita Santamaria.", "pare_id": null, "mare_id": null
+    },
+    { "id": "p29", "nom": "Begoña", "cognom1": "Echevarne", "cognom2": "Santamaria",
+      "genere": "dona", "ofici": null, "llocs": [],
+      "data_naix": null, "lloc_naix": null, "data_mort": null, "lloc_mort": null,
+      "foto_url": null, "notes": "Soltera.", "pare_id": "p28", "mare_id": "p27"
+    },
+    { "id": "p30", "nom": "Belén", "cognom1": "Echevarne", "cognom2": "Santamaria",
+      "genere": "dona", "ofici": null, "llocs": [],
+      "data_naix": null, "lloc_naix": null, "data_mort": null, "lloc_mort": null,
+      "foto_url": null, "notes": "Soltera.", "pare_id": "p28", "mare_id": "p27"
+    },
+    { "id": "p31", "nom": "Camino", "cognom1": "Echevarne", "cognom2": "Santamaria",
+      "genere": "dona", "ofici": null, "llocs": [],
+      "data_naix": null, "lloc_naix": null, "data_mort": null, "lloc_mort": null,
+      "foto_url": null, "notes": null, "pare_id": "p28", "mare_id": "p27"
+    },
+    { "id": "p32", "nom": "Mónica", "cognom1": "Echevarne", "cognom2": "Santamaria",
+      "genere": "dona", "ofici": null, "llocs": [],
+      "data_naix": null, "lloc_naix": null, "data_mort": null, "lloc_mort": null,
+      "foto_url": null, "notes": null, "pare_id": "p28", "mare_id": "p27"
+    },
+    { "id": "p33", "nom": "Fernando", "cognom1": "Echevarne", "cognom2": "Santamaria",
+      "genere": "home", "ofici": null, "llocs": [],
+      "data_naix": null, "lloc_naix": null, "data_mort": null, "lloc_mort": null,
+      "foto_url": null, "notes": null, "pare_id": "p28", "mare_id": "p27"
+    },
+    { "id": "p34", "nom": "Pablo", "cognom1": "Echevarne", "cognom2": "Santamaria",
+      "genere": "home", "ofici": null, "llocs": [],
+      "data_naix": null, "lloc_naix": null, "data_mort": null, "lloc_mort": null,
+      "foto_url": null, "notes": null, "pare_id": "p28", "mare_id": "p27"
+    },
+    { "id": "p35", "nom": "César", "cognom1": "Castejón", "cognom2": null,
+      "genere": "home", "ofici": null, "llocs": [],
+      "data_naix": null, "lloc_naix": null, "data_mort": null, "lloc_mort": null,
+      "foto_url": null, "notes": null, "pare_id": null, "mare_id": null
+    },
+    { "id": "p36", "nom": "Santi", "cognom1": "Saumell", "cognom2": null,
+      "genere": "home", "ofici": null, "llocs": [],
+      "data_naix": null, "lloc_naix": null, "data_mort": null, "lloc_mort": null,
+      "foto_url": null, "notes": null, "pare_id": null, "mare_id": null
+    },
+    { "id": "p37", "nom": "Blanca", "cognom1": "Bau", "cognom2": null,
+      "genere": "dona", "ofici": null, "llocs": [],
+      "data_naix": null, "lloc_naix": null, "data_mort": null, "lloc_mort": null,
+      "foto_url": null, "notes": null, "pare_id": null, "mare_id": null
+    },
+    { "id": "p38", "nom": "Meritxell", "cognom1": null, "cognom2": null,
+      "genere": "dona", "ofici": null, "llocs": [],
+      "data_naix": null, "lloc_naix": null, "data_mort": null, "lloc_mort": null,
+      "foto_url": null, "notes": null, "pare_id": null, "mare_id": null
+    },
+    { "id": "p39", "nom": "Josep", "cognom1": "Velasco", "cognom2": "Ramirez",
+      "genere": "home", "ofici": null, "llocs": [],
+      "data_naix": null, "lloc_naix": null, "data_mort": null, "lloc_mort": null,
+      "foto_url": null, "notes": "Pare de la Sonia. Fill de Rafael i Conxita Velasco. Va separar-se de la Francesca al 1992.", "pare_id": "p50", "mare_id": "p51"
+    },
+    { "id": "p40", "nom": "Francesca", "cognom1": "Menal", "cognom2": "Bendicho",
+      "genere": "dona", "ofici": null, "llocs": [],
+      "data_naix": null, "lloc_naix": null, "data_mort": null, "lloc_mort": null,
+      "foto_url": null, "notes": "Mare de la Sonia. Filla de Crispulo Menal i Paquita Bendicho, tots dos de Tamarit de Litera. Es va separar de Josep Velasco al 1992 i es va tornar a casar amb Pere Miró.", "pare_id": "p52", "mare_id": "p53"
+    },
+    { "id": "p41", "nom": "Eva", "cognom1": "Velasco", "cognom2": "Menal",
+      "genere": "dona", "ofici": null, "llocs": [],
+      "data_naix": "1967-01-01", "lloc_naix": null, "data_mort": null, "lloc_mort": null,
+      "foto_url": null, "notes": "Germana gran de la Sonia. Primer casada amb Chris Roberts (fill: Pol). Després amb Josep Soldevila.", "pare_id": "p39", "mare_id": "p40"
+    },
+    { "id": "p42", "nom": "Cris", "cognom1": "Velasco", "cognom2": "Menal",
+      "genere": "dona", "ofici": null, "llocs": ["Köln"],
+      "data_naix": "1972-01-01", "lloc_naix": null, "data_mort": null, "lloc_mort": null,
+      "foto_url": null, "notes": "Germana de la Sonia. Casada amb Achim Kempf. Viuen a Köln, Alemanya.", "pare_id": "p39", "mare_id": "p40"
+    },
+    { "id": "p43", "nom": "Héctor", "cognom1": "Velasco", "cognom2": "Menal",
+      "genere": "home", "ofici": null, "llocs": [],
+      "data_naix": "1974-01-01", "lloc_naix": null, "data_mort": null, "lloc_mort": null,
+      "foto_url": null, "notes": "Germà de la Sonia (1974).", "pare_id": "p39", "mare_id": "p40"
+    },
+    { "id": "p44", "nom": "Chris", "cognom1": "Roberts", "cognom2": null,
+      "genere": "home", "ofici": null, "llocs": [],
+      "data_naix": null, "lloc_naix": null, "data_mort": null, "lloc_mort": null,
+      "foto_url": null, "notes": "Ex-espós de l'Eva Velasco.", "pare_id": null, "mare_id": null
+    },
+    { "id": "p45", "nom": "Pol", "cognom1": "Roberts", "cognom2": "Velasco",
+      "genere": "home", "ofici": null, "llocs": [],
+      "data_naix": null, "lloc_naix": null, "data_mort": null, "lloc_mort": null,
+      "foto_url": null, "notes": "Fill de l'Eva Velasco i Chris Roberts.", "pare_id": "p44", "mare_id": "p41"
+    },
+    { "id": "p46", "nom": "Josep", "cognom1": "Soldevila", "cognom2": null,
+      "genere": "home", "ofici": null, "llocs": [],
+      "data_naix": null, "lloc_naix": null, "data_mort": null, "lloc_mort": null,
+      "foto_url": null, "notes": "Segon espós de l'Eva Velasco.", "pare_id": null, "mare_id": null
+    },
+    { "id": "p47", "nom": "Achim", "cognom1": "Kempf", "cognom2": null,
+      "genere": "home", "ofici": null, "llocs": ["Köln"],
+      "data_naix": null, "lloc_naix": null, "data_mort": null, "lloc_mort": null,
+      "foto_url": null, "notes": "Espós de Cris Velasco. Viuen a Köln.", "pare_id": null, "mare_id": null
+    },
+    { "id": "p48", "nom": "Carlota", "cognom1": "Kempf", "cognom2": "Velasco",
+      "genere": "dona", "ofici": null, "llocs": ["Köln"],
+      "data_naix": null, "lloc_naix": null, "data_mort": null, "lloc_mort": null,
+      "foto_url": null, "notes": "Filla de Cris Velasco i Achim Kempf. Viu a Köln.", "pare_id": "p47", "mare_id": "p42"
+    },
+    { "id": "p49", "nom": "Leo", "cognom1": "Kempf", "cognom2": "Velasco",
+      "genere": "home", "ofici": null, "llocs": ["Köln"],
+      "data_naix": null, "lloc_naix": null, "data_mort": null, "lloc_mort": null,
+      "foto_url": null, "notes": "Fill de Cris Velasco i Achim Kempf. Viu a Köln.", "pare_id": "p47", "mare_id": "p42"
+    },
+    { "id": "p50", "nom": "Rafael", "cognom1": "Velasco", "cognom2": null,
+      "genere": "home", "ofici": null, "llocs": [],
+      "data_naix": null, "lloc_naix": null, "data_mort": null, "lloc_mort": null,
+      "foto_url": null, "notes": "Avi patern de la Sonia. Pare de Josep Velasco Ramirez.", "pare_id": null, "mare_id": null
+    },
+    { "id": "p51", "nom": "Conxita", "cognom1": "Ramirez", "cognom2": null,
+      "genere": "dona", "ofici": null, "llocs": [],
+      "data_naix": null, "lloc_naix": null, "data_mort": null, "lloc_mort": null,
+      "foto_url": null, "notes": "Àvia paterna de la Sonia. Mare de Josep Velasco Ramirez.", "pare_id": null, "mare_id": null
+    },
+    { "id": "p52", "nom": "Crispulo", "cognom1": "Menal", "cognom2": null,
+      "genere": "home", "ofici": null, "llocs": ["Tamarit de Litera"],
+      "data_naix": null, "lloc_naix": "Tamarit de Litera", "data_mort": null, "lloc_mort": null,
+      "foto_url": null, "notes": "Avi matern de la Sonia per part de mare. De Tamarit de Litera.", "pare_id": null, "mare_id": null
+    },
+    { "id": "p53", "nom": "Paquita", "cognom1": "Bendicho", "cognom2": null,
+      "genere": "dona", "ofici": null, "llocs": ["Tamarit de Litera"],
+      "data_naix": null, "lloc_naix": "Tamarit de Litera", "data_mort": null, "lloc_mort": null,
+      "foto_url": null, "notes": "Àvia materna de la Sonia per part de mare. De Tamarit de Litera.", "pare_id": null, "mare_id": null
     }
   ],
   "unions": [
@@ -128,6 +294,19 @@
     { "id": "u04", "persona1_id": "p07", "persona2_id": "p08" },
     { "id": "u05", "persona1_id": "p11", "persona2_id": "p12" },
     { "id": "u06", "persona1_id": "p13", "persona2_id": "p14" },
-    { "id": "u07", "persona1_id": "p15", "persona2_id": "p16" }
+    { "id": "u07", "persona1_id": "p15", "persona2_id": "p16" },
+    { "id": "u08", "persona1_id": "p21", "persona2_id": "p22" },
+    { "id": "u09", "persona1_id": "p23", "persona2_id": "p24" },
+    { "id": "u10", "persona1_id": "p27", "persona2_id": "p28" },
+    { "id": "u11", "persona1_id": "p31", "persona2_id": "p35" },
+    { "id": "u12", "persona1_id": "p32", "persona2_id": "p36" },
+    { "id": "u13", "persona1_id": "p33", "persona2_id": "p37" },
+    { "id": "u14", "persona1_id": "p34", "persona2_id": "p38" },
+    { "id": "u15", "persona1_id": "p39", "persona2_id": "p40" },
+    { "id": "u16", "persona1_id": "p41", "persona2_id": "p44" },
+    { "id": "u17", "persona1_id": "p41", "persona2_id": "p46" },
+    { "id": "u18", "persona1_id": "p42", "persona2_id": "p47" },
+    { "id": "u19", "persona1_id": "p50", "persona2_id": "p51" },
+    { "id": "u20", "persona1_id": "p52", "persona2_id": "p53" }
   ]
 }

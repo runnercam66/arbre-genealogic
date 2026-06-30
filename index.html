@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Arbre Genealògic · Família Santamaria-Castel</title>
+<title>Arbre Genealògic · Família Santamaria-Velasco</title>
 <style>
   :root {
     --bg:#fdf8f0; --hdr:#7c4a1e; --card-bg:#fff9f2; --border:#c8a87a;
@@ -35,17 +35,16 @@
   .line-couple{stroke:var(--line);stroke-width:2;fill:none;}
   .line-child{stroke:var(--line);stroke-width:1.5;fill:none;}
 
-  .gen-row{
-    display:flex;align-items:flex-start;justify-content:center;
-    gap:20px;margin-bottom:80px;flex-wrap:nowrap;position:relative;
+  #tree{position:relative;}
+  .gen-label-abs{
+    position:absolute;font-size:.62rem;color:#bbb;letter-spacing:1px;
+    text-transform:uppercase;writing-mode:vertical-rl;transform:rotate(180deg);
+    left:4px;user-select:none;
   }
-  .gen-label{
-    position:absolute;left:-52px;top:50%;transform:translateY(-50%) rotate(-90deg);
-    font-size:.65rem;color:#ccc;letter-spacing:1px;text-transform:uppercase;white-space:nowrap;
+  .heart-abs{
+    position:absolute;font-size:.9rem;color:var(--line);
+    pointer-events:none;user-select:none;text-align:center;
   }
-  .family-unit{display:flex;flex-direction:column;align-items:center;}
-  .couple-row{display:flex;align-items:center;gap:4px;}
-  .heart{font-size:.9rem;color:var(--line);user-select:none;}
 
   .person{
     width:148px;background:var(--card-bg);border:1.5px solid var(--border);
@@ -168,7 +167,7 @@
 <div id="loading"><div class="spinner"></div><p id="load-txt">Carregant arbre…</p></div>
 
 <header>
-  <h1>🌳 Família Santamaria · Castel</h1>
+  <h1>🌳 Família Santamaria · Velasco</h1>
   <a href="admin.html">⚙ Admin</a>
   <button onclick="toggleLang()" id="btn-lang">Castellano</button>
 </header>
@@ -366,49 +365,157 @@ function assignGen(persones,maps){
 // ── NOM COMPLET ───────────────────────────────────────────────
 const nomC=p=>[p.nom,p.cognom1,p.cognom2].filter(Boolean).join(' ');
 
+// ── CONSTANTS DE LAYOUT ───────────────────────────────────────
+const CW=148, CH=136, GY=80, HW=20, CG=6, FG=32;
+const COUPLE_W=CW+CG+HW+CG+CW; // 328px per una parella
+
+// ── ALGORISME DE LAYOUT (posicionament absolut) ───────────────
+function computeLayout(data,maps,genMap){
+  const{byId,childrenOf,partnersOf}=maps;
+
+  function sameGenPartner(pid){
+    return(partnersOf[pid]||[]).find(id=>byId[id]&&genMap[id]===genMap[pid])||null;
+  }
+
+  function primaryKids(pid){
+    const pid2=sameGenPartner(pid);
+    return[...new Set([
+      ...(childrenOf[pid]||[]),
+      ...(pid2?(childrenOf[pid2]||[]):[])
+    ])].filter(id=>{
+      if(!byId[id]) return false;
+      const c=byId[id];
+      return c.pare_id===pid||c.mare_id===pid||
+             (pid2&&(c.pare_id===pid2||c.mare_id===pid2));
+    });
+  }
+
+  // Amplada mínima del subàrbre de pid (recursiu)
+  const wCache={};
+  function subtreeW(pid){
+    if(wCache[pid]!==undefined) return wCache[pid];
+    const pid2=sameGenPartner(pid);
+    const selfW=pid2?COUPLE_W:CW;
+    const kids=primaryKids(pid);
+    if(!kids.length){wCache[pid]=selfW;return selfW;}
+    const kidsW=kids.reduce((s,id,i)=>s+subtreeW(id)+(i?FG:0),0);
+    const w=Math.max(selfW,kidsW);
+    wCache[pid]=w; return w;
+  }
+
+  const placed=new Set();
+  const xPos={},yPos={};
+
+  function place(pid,cx){
+    if(placed.has(pid)) return;
+    placed.add(pid);
+    const pid2=sameGenPartner(pid);
+    const rowY=genMap[pid]*(CH+GY)+50;
+    yPos[pid]=rowY;
+    if(pid2&&!placed.has(pid2)){
+      placed.add(pid2);
+      yPos[pid2]=rowY;
+      xPos[pid]=cx-COUPLE_W/2;               // membre esquerra
+      xPos[pid2]=cx-COUPLE_W/2+CW+CG+HW+CG;  // membre dreta
+    } else if(!placed.has(pid)||xPos[pid]===undefined){
+      xPos[pid]=cx-CW/2;
+    }
+    const kids=primaryKids(pid).filter(id=>!placed.has(id));
+    if(!kids.length) return;
+    const ws=kids.map(id=>subtreeW(id));
+    const total=ws.reduce((s,w)=>s+w,0)+FG*(kids.length-1);
+    let kx=cx-total/2;
+    kids.forEach((id,i)=>{
+      place(id,kx+ws[i]/2);
+      kx+=ws[i]+FG;
+    });
+  }
+
+  // Troba les arrels (gen 0)
+  const g0=data.persones.filter(p=>genMap[p.id]===0);
+  const rootSeen=new Set();
+  const roots=[];
+  g0.forEach(p=>{
+    if(rootSeen.has(p.id)) return;
+    const pt=sameGenPartner(p.id);
+    roots.push(p.id);
+    rootSeen.add(p.id);
+    if(pt) rootSeen.add(pt);
+  });
+
+  const rootWs=roots.map(subtreeW);
+  const totalW=rootWs.reduce((s,w)=>s+w,0)+FG*(roots.length-1);
+  const pageCenter=Math.max(totalW/2+80,500);
+  let rcx=pageCenter-totalW/2;
+  roots.forEach((id,i)=>{
+    place(id,rcx+rootWs[i]/2);
+    rcx+=rootWs[i]+FG;
+  });
+
+  // Qualsevol persona no col·locada (per si de cas)
+  data.persones.forEach(p=>{
+    if(xPos[p.id]===undefined){
+      xPos[p.id]=80; yPos[p.id]=genMap[p.id]*(CH+GY)+50;
+    }
+  });
+
+  return{xPos,yPos};
+}
+
 // ── RENDER ───────────────────────────────────────────────────
 function renderTree(data){
   window._data=data;
-  const{persones,unions}=data;
+  const{persones}=data;
   const container=document.getElementById('tree');
   const svg=document.getElementById('svg-lines');
   container.innerHTML=''; svg.innerHTML='';
 
   const maps=buildMaps(data);
-  const{byId,partnersOf}=maps;
   const gen=assignGen(persones,maps);
   window._maps=maps; window._gen=gen;
 
+  const{xPos,yPos}=computeLayout(data,maps,gen);
+  window._xPos=xPos; window._yPos=yPos;
+
   const maxGen=Math.max(...Object.values(gen));
-  const byGen=Array.from({length:maxGen+1},(_,i)=>persones.filter(p=>gen[p.id]===i));
+  const maxX=Math.max(...Object.values(xPos))+CW+80;
+  const maxY=Math.max(...Object.values(yPos))+CH+80;
+  container.style.cssText=`position:relative;width:${maxX}px;height:${maxY}px;`;
 
-  byGen.forEach((gp,g)=>{
-    const row=document.createElement('div');
-    row.className='gen-row'; row.dataset.gen=g;
-    const lbl=document.createElement('span');
-    lbl.className='gen-label'; lbl.textContent=t.gen[maxGen-g]||`G${g}`;
-    row.appendChild(lbl);
+  // Etiquetes de generació (una per fila)
+  const gLabeled=new Set();
+  persones.forEach(p=>{
+    const g=gen[p.id];
+    if(gLabeled.has(g)) return;
+    gLabeled.add(g);
+    const lbl=document.createElement('div');
+    lbl.className='gen-label-abs';
+    lbl.style.top=(yPos[p.id]+CH/2)+'px';
+    lbl.textContent=t.gen[maxGen-g]||`G${g}`;
+    container.appendChild(lbl);
+  });
 
-    const seen=new Set();
-    const groups=[];
-    gp.forEach(p=>{
-      if(seen.has(p.id)) return;
-      const partner=(partnersOf[p.id]||[]).find(pid=>gen[pid]===g&&byId[pid]);
-      if(partner&&!seen.has(partner)){
-        groups.push([p,byId[partner]]); seen.add(p.id); seen.add(partner);
-      } else if(!partner){ groups.push([p]); seen.add(p.id); }
-    });
+  // Cors entre parelles
+  (data.unions||[]).forEach(u=>{
+    if(gen[u.persona1_id]!==gen[u.persona2_id]) return;
+    const x1=xPos[u.persona1_id],x2=xPos[u.persona2_id];
+    if(x1===undefined||x2===undefined) return;
+    const leftX=Math.min(x1,x2)+CW+CG;
+    const topY=yPos[u.persona1_id]+CH/2-10;
+    const h=document.createElement('div');
+    h.className='heart-abs';
+    h.style.cssText=`left:${leftX}px;top:${topY}px;width:${HW}px;`;
+    h.textContent='♡';
+    container.appendChild(h);
+  });
 
-    groups.forEach(pair=>{
-      const unit=document.createElement('div'); unit.className='family-unit';
-      const crow=document.createElement('div'); crow.className='couple-row';
-      pair.forEach((person,i)=>{
-        if(i===1){const h=document.createElement('span');h.className='heart';h.textContent='♡';crow.appendChild(h);}
-        crow.appendChild(makeCard(person,maps));
-      });
-      unit.appendChild(crow); row.appendChild(unit);
-    });
-    container.appendChild(row);
+  // Targetes de persones
+  persones.forEach(p=>{
+    const card=makeCard(p,maps);
+    card.style.position='absolute';
+    card.style.left=xPos[p.id]+'px';
+    card.style.top=yPos[p.id]+'px';
+    container.appendChild(card);
   });
 
   requestAnimationFrame(()=>drawLines(persones,maps,gen));
@@ -437,32 +544,33 @@ function makeCard(p,maps){
   return card;
 }
 
-// ── LÍNIES EN ANGLE RECTE ────────────────────────────────────
+// ── LÍNIES EN ANGLE RECTE (usa posicions pre-calculades) ─────
 function drawLines(persones,maps,gen){
-  const wrap=document.getElementById('tree-wrap');
   const svg=document.getElementById('svg-lines');
-  const wRect=wrap.getBoundingClientRect();
+  const xP=window._xPos, yP=window._yPos;
 
   function pos(id){
+    if(xP[id]===undefined) return null;
+    // Usa l'altura real de la targeta del DOM
     const el=document.querySelector(`.person[data-id="${id}"]`);
-    if(!el) return null;
-    const r=el.getBoundingClientRect();
-    const x=r.left-wRect.left, y=r.top-wRect.top;
-    return{x,y,w:r.width,h:r.height,cx:x+r.width/2,top:y,bot:y+r.height,mid:y+r.height/2};
+    const h=el?el.offsetHeight:CH;
+    const x=xP[id],y=yP[id];
+    return{x,y,w:CW,h,cx:x+CW/2,top:y,bot:y+h,mid:y+h/2};
   }
 
   function seg(x1,y1,x2,y2,cls){
     const l=document.createElementNS('http://www.w3.org/2000/svg','line');
-    l.setAttribute('x1',x1);l.setAttribute('y1',y1);
-    l.setAttribute('x2',x2);l.setAttribute('y2',y2);
+    l.setAttribute('x1',Math.round(x1));l.setAttribute('y1',Math.round(y1));
+    l.setAttribute('x2',Math.round(x2));l.setAttribute('y2',Math.round(y2));
     l.setAttribute('class',cls||'line-child');
     svg.appendChild(l);
   }
 
-  svg.setAttribute('width',wrap.scrollWidth);
-  svg.setAttribute('height',wrap.scrollHeight);
+  const maxX=Math.max(...Object.values(xP))+CW+80;
+  const maxY=Math.max(...Object.values(yP))+CH+80;
+  svg.setAttribute('width',maxX); svg.setAttribute('height',maxY);
 
-  // 1. Línies de parella (horitzontal al mig de les targetes)
+  // Línies de parella
   (window._data.unions||[]).forEach(u=>{
     if(gen[u.persona1_id]!==gen[u.persona2_id]) return;
     const r1=pos(u.persona1_id),r2=pos(u.persona2_id);
@@ -472,7 +580,7 @@ function drawLines(persones,maps,gen){
     seg(lx1,midY,lx2,midY,'line-couple');
   });
 
-  // 2. Brackets pares → fills (agrupa germans sota els seus pares)
+  // Brackets pares → fills
   const grups={};
   persones.forEach(child=>{
     const pids=[child.pare_id,child.mare_id].filter(Boolean);
@@ -486,27 +594,19 @@ function drawLines(persones,maps,gen){
     const pRects=pids.map(pos).filter(Boolean);
     const kRects=kids.map(id=>pos(id)).filter(Boolean);
     if(!pRects.length||!kRects.length) return;
-
-    // Punt de sortida: centre horitzontal dels pares, sota les seves targetes
     const midX=pRects.reduce((s,r)=>s+r.cx,0)/pRects.length;
     const fromY=Math.max(...pRects.map(r=>r.bot));
     const toY=Math.min(...kRects.map(r=>r.top));
-    // Punt de bifurcació (junction) a ~40% del espai entre files
-    const jY=fromY+(toY-fromY)*0.4;
-
-    // Línia vertical des dels pares fins la bifurcació
+    const jY=fromY+(toY-fromY)*0.42;
     seg(midX,fromY,midX,jY);
-
     if(kRects.length===1){
-      // Fill únic: línia en L si cal, recta si coincideix
       if(Math.abs(kRects[0].cx-midX)>3) seg(midX,jY,kRects[0].cx,jY);
       seg(kRects[0].cx,jY,kRects[0].cx,kRects[0].top);
     } else {
-      // Múltiples fills: barra horitzontal + línies verticals cap a cada fill
       const lx=Math.min(...kRects.map(r=>r.cx));
       const rx=Math.max(...kRects.map(r=>r.cx));
-      seg(lx,jY,rx,jY); // barra horitzontal de germans
-      kRects.forEach(r=>seg(r.cx,jY,r.cx,r.top)); // línia a cada fill
+      seg(lx,jY,rx,jY);
+      kRects.forEach(r=>seg(r.cx,jY,r.cx,r.top));
     }
   });
 }
