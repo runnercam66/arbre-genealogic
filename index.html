@@ -6,127 +6,161 @@
 <title>Arbre Genealògic · Família Santamaria-Castel</title>
 <style>
   :root {
-    --bg: #fdf8f0; --card-h: #7c4a1e; --card-f: #fff9f2;
-    --card-border: #c8a87a; --line: #a07850;
-    --blue: #3a6186; --pink: #a04060; --shadow: rgba(100,60,20,.15);
+    --bg:#fdf8f0; --hdr:#7c4a1e; --card-bg:#fff9f2; --border:#c8a87a;
+    --line:#a07850; --blue:#3a6186; --pink:#a04060; --shadow:rgba(100,60,20,.15);
+    --green:#2e7d32; --red:#c62828;
   }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { background: var(--bg); font-family: Georgia, serif; overflow: hidden; }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:var(--bg);font-family:Georgia,serif;overflow:hidden;}
 
-  header {
-    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-    background: var(--card-h); color: #fff;
-    display: flex; align-items: center; gap: 12px;
-    padding: 10px 20px; box-shadow: 0 2px 8px var(--shadow);
+  header{
+    position:fixed;top:0;left:0;right:0;z-index:100;
+    background:var(--hdr);color:#fff;
+    display:flex;align-items:center;gap:10px;padding:9px 18px;
+    box-shadow:0 2px 8px var(--shadow);
   }
-  header h1 { font-size: 1.15rem; flex: 1; }
-  header a, header button {
-    background: rgba(255,255,255,.2); color: #fff;
-    border: 1px solid rgba(255,255,255,.4); padding: 5px 12px;
-    border-radius: 4px; cursor: pointer; font-size: .82rem;
-    text-decoration: none; white-space: nowrap; font-family: inherit;
+  header h1{font-size:1.1rem;flex:1;}
+  header a,header button{
+    background:rgba(255,255,255,.2);color:#fff;border:1px solid rgba(255,255,255,.35);
+    padding:5px 11px;border-radius:4px;cursor:pointer;font-size:.8rem;
+    text-decoration:none;white-space:nowrap;font-family:inherit;
   }
-  header a:hover, header button:hover { background: rgba(255,255,255,.35); }
+  header a:hover,header button:hover{background:rgba(255,255,255,.35);}
 
-  #canvas {
-    position: fixed; top: 52px; left: 0; right: 0; bottom: 0;
-    overflow: auto; cursor: grab;
-  }
-  #canvas:active { cursor: grabbing; }
-  #tree-wrap { position: relative; min-width: 100%; min-height: 100%; padding: 60px 80px 120px; }
+  #canvas{position:fixed;top:50px;left:0;right:0;bottom:0;overflow:auto;cursor:grab;}
+  #canvas:active{cursor:grabbing;}
+  #tree-wrap{position:relative;min-width:100%;min-height:100%;padding:50px 60px 100px;}
 
-  #svg-lines {
-    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-    pointer-events: none; overflow: visible;
-  }
-  .line-couple { stroke: var(--line); stroke-width: 2; fill: none; }
-  .line-child  { stroke: var(--line); stroke-width: 1.5; fill: none; }
+  #svg-lines{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;overflow:visible;}
+  .line-couple{stroke:var(--line);stroke-width:2;fill:none;}
+  .line-child{stroke:var(--line);stroke-width:1.5;fill:none;}
 
-  .gen-row {
-    display: flex; align-items: flex-start; justify-content: center;
-    gap: 24px; margin-bottom: 90px; flex-wrap: nowrap; position: relative;
+  .gen-row{
+    display:flex;align-items:flex-start;justify-content:center;
+    gap:20px;margin-bottom:80px;flex-wrap:nowrap;position:relative;
   }
-  .gen-label {
-    writing-mode: vertical-rl; transform: rotate(180deg);
-    font-size: .68rem; color: #bbb; letter-spacing: 1px;
-    position: absolute; left: -60px; top: 50%; transform: translateY(-50%) rotate(180deg);
-    text-transform: uppercase;
+  .gen-label{
+    position:absolute;left:-52px;top:50%;transform:translateY(-50%) rotate(-90deg);
+    font-size:.65rem;color:#ccc;letter-spacing:1px;text-transform:uppercase;white-space:nowrap;
   }
+  .family-unit{display:flex;flex-direction:column;align-items:center;}
+  .couple-row{display:flex;align-items:center;gap:4px;}
+  .heart{font-size:.9rem;color:var(--line);user-select:none;}
 
-  .family-unit { display: flex; flex-direction: column; align-items: center; }
-  .couple-row  { display: flex; align-items: center; gap: 4px; }
-  .heart { font-size: .95rem; color: var(--line); user-select: none; }
-
-  .person {
-    width: 150px; background: var(--card-f);
-    border: 1.5px solid var(--card-border); border-radius: 8px;
-    overflow: hidden; box-shadow: 0 2px 8px var(--shadow);
-    cursor: pointer; transition: transform .15s, box-shadow .15s;
+  .person{
+    width:148px;background:var(--card-bg);border:1.5px solid var(--border);
+    border-radius:8px;overflow:hidden;box-shadow:0 2px 8px var(--shadow);
+    cursor:pointer;transition:transform .15s,box-shadow .15s;
   }
-  .person:hover { transform: translateY(-3px); box-shadow: 0 6px 18px var(--shadow); }
-  .person.home { border-top: 4px solid var(--blue); }
-  .person.dona { border-top: 4px solid var(--pink); }
-  .person.jo   { outline: 3px solid gold; outline-offset: 1px; }
+  .person:hover{transform:translateY(-3px);box-shadow:0 6px 18px var(--shadow);}
+  .person.home{border-top:4px solid var(--blue);}
+  .person.dona{border-top:4px solid var(--pink);}
+  .person.jo{outline:3px solid gold;outline-offset:1px;}
 
-  .person-foto {
-    width: 100%; height: 86px; background: #e8dcc8;
-    display: flex; align-items: center; justify-content: center; font-size: 2.4rem;
-    overflow: hidden;
+  .person-foto{
+    width:100%;height:84px;background:#e8dcc8;
+    display:flex;align-items:center;justify-content:center;font-size:2.3rem;overflow:hidden;
   }
-  .person-foto img { width: 100%; height: 100%; object-fit: cover; }
-
-  .person-info { padding: 7px 8px; }
-  .person-nom  { font-size: .8rem; font-weight: bold; color: #333; line-height: 1.2; }
-  .person-dates{ font-size: .68rem; color: #999; margin-top: 2px; }
+  .person-foto img{width:100%;height:100%;object-fit:cover;}
+  .person-info{padding:6px 8px;}
+  .person-nom{font-size:.78rem;font-weight:bold;color:#333;line-height:1.2;}
+  .person-dates{font-size:.67rem;color:#999;margin-top:2px;}
 
   /* MODAL */
-  #modal-bg {
-    display: none; position: fixed; inset: 0; z-index: 200;
-    background: rgba(0,0,0,.5); align-items: center; justify-content: center;
+  #modal-bg{
+    display:none;position:fixed;inset:0;z-index:200;
+    background:rgba(0,0,0,.5);align-items:center;justify-content:center;
   }
-  #modal-bg.open { display: flex; }
-  #modal {
-    background: var(--card-f); border-radius: 12px;
-    box-shadow: 0 8px 32px rgba(0,0,0,.3);
-    max-width: 440px; width: 90%; max-height: 88vh; overflow-y: auto;
-    padding: 26px; position: relative;
+  #modal-bg.open{display:flex;}
+  #modal{
+    background:var(--card-bg);border-radius:12px;
+    box-shadow:0 8px 32px rgba(0,0,0,.3);
+    max-width:460px;width:92%;max-height:88vh;overflow-y:auto;
+    padding:22px;position:relative;
   }
-  #modal-close {
-    position: absolute; top: 10px; right: 14px;
-    background: none; border: none; font-size: 1.4rem; cursor: pointer; color: #aaa;
+  #modal-close{
+    position:absolute;top:10px;right:12px;
+    background:none;border:none;font-size:1.3rem;cursor:pointer;color:#aaa;
   }
-  .modal-foto {
-    width: 100%; height: 170px; border-radius: 8px; margin-bottom: 14px;
-    background: #e8dcc8; display: flex; align-items: center; justify-content: center;
-    font-size: 4rem; overflow: hidden;
+  #modal-edit-btn{
+    position:absolute;top:10px;right:40px;
+    background:var(--hdr);color:#fff;border:none;border-radius:4px;
+    padding:3px 10px;font-size:.75rem;cursor:pointer;font-family:inherit;
   }
-  .modal-foto img { width: 100%; height: 100%; object-fit: cover; border-radius: 8px; }
-  #modal h2 { font-size: 1.2rem; color: var(--card-h); margin-bottom: 2px; }
-  #modal .sub { font-size: .8rem; color: #aaa; margin-bottom: 14px; }
-  #modal dl { display: grid; grid-template-columns: auto 1fr; gap: 5px 12px; font-size: .86rem; }
-  #modal dt { color: #999; }
-  #modal dd { color: #333; }
-  #modal .notes { margin-top: 12px; font-size: .83rem; color: #666; font-style: italic; border-top: 1px solid #eee; padding-top: 10px; }
+  .modal-foto{
+    width:100%;height:160px;border-radius:8px;margin-bottom:12px;
+    background:#e8dcc8;display:flex;align-items:center;justify-content:center;
+    font-size:4rem;overflow:hidden;
+  }
+  .modal-foto img{width:100%;height:100%;object-fit:cover;border-radius:8px;}
+  #modal h2{font-size:1.15rem;color:var(--hdr);margin-bottom:2px;}
+  #modal .sub{font-size:.78rem;color:#aaa;margin-bottom:12px;}
+  #modal dl{display:grid;grid-template-columns:auto 1fr;gap:4px 10px;font-size:.84rem;}
+  #modal dt{color:#999;}
+  #modal dd{color:#333;}
+  .modal-notes{margin-top:10px;font-size:.82rem;color:#666;font-style:italic;border-top:1px solid #eee;padding-top:8px;}
+
+  /* EDIT FORM dins el modal */
+  #edit-form{display:none;}
+  #edit-form .ef-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;}
+  #edit-form .ef-field{margin-bottom:8px;}
+  #edit-form label{display:block;font-size:.75rem;color:#888;margin-bottom:2px;}
+  #edit-form input,#edit-form select,#edit-form textarea{
+    width:100%;padding:6px 8px;border:1px solid var(--border);border-radius:4px;
+    font-size:.84rem;font-family:inherit;background:#fff;color:#333;
+  }
+  #edit-form textarea{height:60px;resize:vertical;}
+  #edit-form input:focus,#edit-form select:focus,#edit-form textarea:focus{
+    outline:none;border-color:var(--hdr);box-shadow:0 0 0 2px rgba(124,74,30,.12);
+  }
+  .edit-actions{display:flex;gap:8px;margin-top:14px;}
+  .btn-save{flex:1;padding:9px;background:var(--green);color:#fff;border:none;border-radius:5px;cursor:pointer;font-family:inherit;font-size:.88rem;}
+  .btn-cancel-edit{flex:1;padding:9px;background:#eee;color:#555;border:none;border-radius:5px;cursor:pointer;font-family:inherit;font-size:.88rem;}
+  .btn-save:hover{opacity:.85;} .btn-cancel-edit:hover{background:#ddd;}
+  .btn-delete{padding:9px 14px;background:var(--red);color:#fff;border:none;border-radius:5px;cursor:pointer;font-family:inherit;font-size:.88rem;}
+  #save-ok{display:none;margin-top:8px;font-size:.82rem;color:var(--green);text-align:center;}
+
+  /* BANNER formulari */
+  #banner-form{
+    position:fixed;bottom:20px;right:20px;z-index:100;
+    background:linear-gradient(135deg,#2e7d32,#43a047);
+    color:#fff;border:none;border-radius:12px;
+    padding:14px 20px;font-family:inherit;cursor:pointer;
+    box-shadow:0 4px 18px rgba(46,125,50,.35);
+    display:flex;flex-direction:column;align-items:center;gap:3px;
+    text-decoration:none;max-width:170px;text-align:center;
+    transition:transform .15s,box-shadow .15s;
+  }
+  #banner-form:hover{transform:translateY(-3px);box-shadow:0 8px 24px rgba(46,125,50,.45);}
+  #banner-form .bf-icon{font-size:1.6rem;line-height:1;}
+  #banner-form .bf-title{font-size:.82rem;font-weight:bold;line-height:1.2;}
+  #banner-form .bf-sub{font-size:.68rem;opacity:.85;line-height:1.3;}
+
+  /* ADD PERSON button (admin) */
+  #btn-add-person{
+    position:fixed;bottom:20px;right:200px;z-index:100;
+    background:var(--hdr);color:#fff;border:none;border-radius:50px;
+    padding:11px 20px;font-size:.9rem;cursor:pointer;font-family:inherit;
+    box-shadow:0 4px 14px var(--shadow);
+  }
+  #btn-add-person:hover{opacity:.88;}
 
   /* LOADING */
-  #loading {
-    position: fixed; inset: 0; display: flex; flex-direction: column;
-    align-items: center; justify-content: center; background: var(--bg); z-index: 300; gap: 14px;
+  #loading{
+    position:fixed;inset:0;display:flex;flex-direction:column;
+    align-items:center;justify-content:center;background:var(--bg);z-index:300;gap:14px;
   }
-  .spinner {
-    width: 38px; height: 38px; border: 3px solid #ddd;
-    border-top-color: var(--card-h); border-radius: 50%; animation: spin .8s linear infinite;
-  }
-  @keyframes spin { to { transform: rotate(360deg); } }
-  #loading p { color: var(--card-h); font-size: .95rem; }
+  .spinner{width:36px;height:36px;border:3px solid #ddd;border-top-color:var(--hdr);border-radius:50%;animation:spin .8s linear infinite;}
+  @keyframes spin{to{transform:rotate(360deg);}}
+  #loading p{color:var(--hdr);font-size:.9rem;}
 
-  #legend {
-    position: fixed; bottom: 14px; right: 16px; z-index: 100;
-    background: rgba(255,249,242,.92); border: 1px solid var(--card-border);
-    border-radius: 8px; padding: 8px 12px; font-size: .72rem; color: #777;
+  #legend{
+    position:fixed;bottom:14px;left:16px;z-index:100;
+    background:rgba(255,249,242,.92);border:1px solid var(--border);
+    border-radius:8px;padding:7px 12px;font-size:.7rem;color:#777;
   }
-  #legend div { display: flex; align-items: center; gap: 6px; margin: 3px 0; }
-  .lb { width: 14px; height: 10px; border-radius: 2px; border: 1px solid #c8a87a; }
+  #legend div{display:flex;align-items:center;gap:6px;margin:2px 0;}
+  .lb{width:13px;height:9px;border-radius:2px;border:1px solid #c8a87a;}
 </style>
 </head>
 <body>
@@ -135,7 +169,6 @@
 
 <header>
   <h1>🌳 Família Santamaria · Castel</h1>
-  <a href="formulari.html" id="btn-add">＋ Afegir persona</a>
   <a href="admin.html">⚙ Admin</a>
   <button onclick="toggleLang()" id="btn-lang">Castellano</button>
 </header>
@@ -147,16 +180,80 @@
   </div>
 </div>
 
+<!-- MODAL VIEW / EDIT -->
 <div id="modal-bg" onclick="if(event.target===this)closeModal()">
   <div id="modal">
     <button id="modal-close" onclick="closeModal()">✕</button>
-    <div id="modal-foto" class="modal-foto"></div>
-    <h2 id="modal-nom"></h2>
-    <div id="modal-sub" class="sub"></div>
-    <dl id="modal-dl"></dl>
-    <div id="modal-notes" class="notes" style="display:none"></div>
+    <button id="modal-edit-btn" onclick="toggleEdit()" id="modal-edit-btn">✏️ Editar</button>
+
+    <!-- VIEW MODE -->
+    <div id="view-mode">
+      <div id="modal-foto" class="modal-foto"></div>
+      <h2 id="modal-nom"></h2>
+      <div id="modal-sub" class="sub"></div>
+      <dl id="modal-dl"></dl>
+      <div id="modal-notes" class="modal-notes" style="display:none"></div>
+    </div>
+
+    <!-- EDIT MODE -->
+    <div id="edit-form">
+      <h3 style="color:var(--hdr);margin-bottom:12px;font-size:1rem">✏️ Editar persona</h3>
+      <div class="ef-row">
+        <div class="ef-field"><label>Nom</label><input id="e-nom" type="text"></div>
+        <div class="ef-field"><label>1r cognom</label><input id="e-cog1" type="text"></div>
+      </div>
+      <div class="ef-row">
+        <div class="ef-field"><label>2n cognom</label><input id="e-cog2" type="text"></div>
+        <div class="ef-field">
+          <label>Gènere</label>
+          <select id="e-gen">
+            <option value="">—</option>
+            <option value="home">Home</option>
+            <option value="dona">Dona</option>
+            <option value="altre">Altre</option>
+          </select>
+        </div>
+      </div>
+      <div class="ef-row">
+        <div class="ef-field"><label>Data de naixement</label><input id="e-naix" type="date"></div>
+        <div class="ef-field"><label>Lloc de naixement</label><input id="e-lloc-naix" type="text"></div>
+      </div>
+      <div class="ef-row">
+        <div class="ef-field"><label>Data de defunció</label><input id="e-mort" type="date"></div>
+        <div class="ef-field"><label>Lloc de defunció</label><input id="e-lloc-mort" type="text"></div>
+      </div>
+      <div class="ef-row">
+        <div class="ef-field"><label>Ofici / Professió</label><input id="e-ofici" type="text"></div>
+        <div class="ef-field"><label>Foto (URL)</label><input id="e-foto" type="text" placeholder="https://…"></div>
+      </div>
+      <div class="ef-field"><label>Llocs on va viure (separats per comes)</label><input id="e-llocs" type="text"></div>
+      <div class="ef-row">
+        <div class="ef-field">
+          <label>Pare</label>
+          <select id="e-pare"></select>
+        </div>
+        <div class="ef-field">
+          <label>Mare</label>
+          <select id="e-mare"></select>
+        </div>
+      </div>
+      <div class="ef-field"><label>Notes</label><textarea id="e-notes"></textarea></div>
+      <div class="edit-actions">
+        <button class="btn-cancel-edit" onclick="toggleEdit()">Cancel·lar</button>
+        <button class="btn-save" onclick="saveEdit()">💾 Desar i descarregar JSON</button>
+      </div>
+      <div id="save-ok">✅ familia.json descarregat! Puja'l a GitHub per actualitzar l'arbre.</div>
+    </div>
   </div>
 </div>
+
+<button id="btn-add-person" onclick="openAddModal()">＋ Afegir (admin)</button>
+
+<a href="formulari.html" id="banner-form">
+  <span class="bf-icon">📝</span>
+  <span class="bf-title" id="bf-title">Proposa un nou membre</span>
+  <span class="bf-sub" id="bf-sub">Formulari per afegir família</span>
+</a>
 
 <div id="legend">
   <div><div class="lb" style="border-top:4px solid #3a6186"></div><span id="lg-home">Home</span></div>
@@ -168,291 +265,397 @@
 <script>
 // ── TRADUCCIONS ──────────────────────────────────────────────
 const T = {
-  ca: {
-    load:'Carregant arbre…', addPerson:'＋ Afegir persona', lang:'Castellano',
-    home:'Home', dona:'Dona', jo:'Tu',
-    naix:'Nascut/da', lloc_naix:'Lloc de naixement',
-    mort:'Mort/da', lloc_mort:'Lloc de defunció',
-    pares:'Pares', fills:'Fills', parella:'Parella', notes:'Notes',
-    ofici:'Ofici', llocs:'Llocs on va viure',
-    gen:['Bisavis','Avis','Pares','Fills','Néts','Besnéts'],
+  ca:{
+    load:'Carregant arbre…',lang:'Castellano',
+    home:'Home',dona:'Dona',jo:'Tu',
+    naix:'Nascut/da',lloc_naix:'Lloc de naixement',
+    mort:'Mort/da',lloc_mort:'Lloc de defunció',
+    ofici:'Ofici',llocs:'Llocs on va viure',
+    pares:'Pares',fills:'Fills',parella:'Parella',notes:'Notes',
+    edit:'✏️ Editar',save:'💾 Desar i descarregar JSON',cancel:'Cancel·lar',
+    saveOk:'✅ familia.json descarregat! Puja\'l a GitHub per actualitzar l\'arbre.',
+    gen:['Fills','Pares','Avis','Besavis','Rebesavis','Tataraavis'],
+    bannerTitle:'Proposa un nou membre',bannerSub:'Formulari per afegir família',
   },
-  es: {
-    load:'Cargando árbol…', addPerson:'＋ Añadir persona', lang:'Català',
-    home:'Hombre', dona:'Mujer', jo:'Tú',
-    naix:'Nacido/a', lloc_naix:'Lugar de nacimiento',
-    mort:'Fallecido/a', lloc_mort:'Lugar de defunción',
-    pares:'Padres', fills:'Hijos', parella:'Pareja', notes:'Notas',
-    ofici:'Oficio', llocs:'Lugares donde vivió',
-    gen:['Bisabuelos','Abuelos','Padres','Hijos','Nietos','Bisnietos'],
+  es:{
+    load:'Cargando árbol…',lang:'Català',
+    home:'Hombre',dona:'Mujer',jo:'Tú',
+    naix:'Nacido/a',lloc_naix:'Lugar de nacimiento',
+    mort:'Fallecido/a',lloc_mort:'Lugar de defunción',
+    ofici:'Oficio',llocs:'Lugares donde vivió',
+    pares:'Padres',fills:'Hijos',parella:'Pareja',notes:'Notas',
+    edit:'✏️ Editar',save:'💾 Guardar y descargar JSON',cancel:'Cancelar',
+    saveOk:'✅ familia.json descargado. Súbelo a GitHub para actualizar el árbol.',
+    gen:['Hijos','Padres','Abuelos','Bisabuelos','Tatarabuelos','Choznos'],
+    bannerTitle:'Proponer un nuevo miembro',bannerSub:'Formulario para añadir familia',
   }
 };
-let lang = localStorage.getItem('lang') || 'ca';
-let t = T[lang];
+let lang=localStorage.getItem('lang')||'ca', t=T[lang];
 
-function toggleLang() {
-  lang = lang === 'ca' ? 'es' : 'ca';
-  t = T[lang];
-  localStorage.setItem('lang', lang);
-  document.getElementById('btn-lang').textContent = t.lang;
-  document.getElementById('load-txt').textContent = t.load;
-  document.getElementById('btn-add').textContent = t.addPerson;
-  document.getElementById('lg-home').textContent = t.home;
-  document.getElementById('lg-dona').textContent = t.dona;
-  document.getElementById('lg-jo').textContent = t.jo;
-  if (window._data) renderTree(window._data);
+function toggleLang(){
+  lang=lang==='ca'?'es':'ca'; t=T[lang];
+  localStorage.setItem('lang',lang);
+  document.getElementById('btn-lang').textContent=t.lang;
+  document.getElementById('lg-home').textContent=t.home;
+  document.getElementById('lg-dona').textContent=t.dona;
+  document.getElementById('lg-jo').textContent=t.jo;
+  document.getElementById('bf-title').textContent=t.bannerTitle;
+  document.getElementById('bf-sub').textContent=t.bannerSub;
+  if(window._data) renderTree(window._data);
 }
 
 // ── DATA ─────────────────────────────────────────────────────
-async function loadData() {
-  // En local (sense GitHub), llegeix el fitxer directament
-  // Un cop a GitHub Pages, usa FAMILIA_JSON_URL de config.js
-  const url = (typeof FAMILIA_JSON_URL !== 'undefined' && FAMILIA_JSON_URL.includes('raw.githubusercontent'))
-    ? FAMILIA_JSON_URL
-    : 'familia.json';
-  const r = await fetch(url);
-  if (!r.ok) throw new Error(`HTTP ${r.status}`);
+async function loadData(){
+  const url=(typeof FAMILIA_JSON_URL!=='undefined'&&FAMILIA_JSON_URL.includes('raw.githubusercontent'))
+    ?FAMILIA_JSON_URL:'familia.json';
+  const r=await fetch(url+'?t='+Date.now());
+  if(!r.ok) throw new Error('HTTP '+r.status);
   return r.json();
 }
 
-// ── TREE LOGIC ───────────────────────────────────────────────
-function buildMaps({ persones, unions }) {
-  const byId = {}, childrenOf = {}, parentsOf = {}, partnersOf = {};
-  persones.forEach(p => {
-    byId[p.id] = p;
-    childrenOf[p.id] = [];
-    parentsOf[p.id] = [];
-    partnersOf[p.id] = [];
+// ── MAPS ─────────────────────────────────────────────────────
+function buildMaps({persones,unions}){
+  const byId={},childrenOf={},parentsOf={},partnersOf={};
+  persones.forEach(p=>{byId[p.id]=p;childrenOf[p.id]=[];parentsOf[p.id]=[];partnersOf[p.id]=[];});
+  persones.forEach(p=>{
+    if(p.pare_id&&byId[p.pare_id]){parentsOf[p.id].push(p.pare_id);childrenOf[p.pare_id].push(p.id);}
+    if(p.mare_id&&byId[p.mare_id]){parentsOf[p.id].push(p.mare_id);childrenOf[p.mare_id].push(p.id);}
   });
-  persones.forEach(p => {
-    if (p.pare_id && byId[p.pare_id]) { parentsOf[p.id].push(p.pare_id); childrenOf[p.pare_id].push(p.id); }
-    if (p.mare_id && byId[p.mare_id]) { parentsOf[p.id].push(p.mare_id); childrenOf[p.mare_id].push(p.id); }
+  (unions||[]).forEach(u=>{
+    if(byId[u.persona1_id]) partnersOf[u.persona1_id].push(u.persona2_id);
+    if(byId[u.persona2_id]) partnersOf[u.persona2_id].push(u.persona1_id);
   });
-  (unions || []).forEach(u => {
-    if (byId[u.persona1_id]) partnersOf[u.persona1_id].push(u.persona2_id);
-    if (byId[u.persona2_id]) partnersOf[u.persona2_id].push(u.persona1_id);
-  });
-  return { byId, childrenOf, parentsOf, partnersOf };
+  return{byId,childrenOf,parentsOf,partnersOf};
 }
 
-function assignGen(persones, maps) {
-  const { childrenOf, parentsOf } = maps;
-  const gen = {};
-  function dfs(id, g) {
-    if (gen[id] !== undefined && gen[id] >= g) return;
-    gen[id] = g;
-    childrenOf[id].forEach(c => dfs(c, g + 1));
+// ── GENERACIÓ (amb correcció de parelles sense pares) ────────
+function assignGen(persones,maps){
+  const{childrenOf,parentsOf,partnersOf}=maps;
+  const gen={};
+  const noParents=new Set(persones.filter(p=>parentsOf[p.id].length===0).map(p=>p.id));
+
+  function propagate(id,g){
+    if(gen[id]!==undefined&&gen[id]>=g) return;
+    gen[id]=g;
+    (childrenOf[id]||[]).forEach(c=>propagate(c,g+1));
   }
-  persones.filter(p => parentsOf[p.id].length === 0).forEach(p => dfs(p.id, 0));
-  persones.forEach(p => { if (gen[p.id] === undefined) gen[p.id] = 0; });
+
+  // Pas 1: propaga des de totes les persones sense pares
+  noParents.forEach(id=>propagate(id,0));
+
+  // Pas 2: eleva parelles sense pares a la generació de la seva parella
+  // (ex: Ricardo Mur → gen de Asunción Castel Riba)
+  let changed=true;
+  while(changed){
+    changed=false;
+    noParents.forEach(id=>{
+      const spGens=(partnersOf[id]||[]).map(pid=>gen[pid]).filter(g=>g!==undefined);
+      if(!spGens.length) return;
+      const maxSp=Math.max(...spGens);
+      if(maxSp>(gen[id]||0)){
+        gen[id]=maxSp;
+        (childrenOf[id]||[]).forEach(c=>propagate(c,maxSp+1));
+        changed=true;
+      }
+    });
+  }
+  persones.forEach(p=>{if(gen[p.id]===undefined) gen[p.id]=0;});
   return gen;
 }
 
+// ── NOM COMPLET ───────────────────────────────────────────────
+const nomC=p=>[p.nom,p.cognom1,p.cognom2].filter(Boolean).join(' ');
+
 // ── RENDER ───────────────────────────────────────────────────
-function renderTree(data) {
-  window._data = data;
-  const { persones, unions } = data;
-  const container = document.getElementById('tree');
-  const svg = document.getElementById('svg-lines');
-  container.innerHTML = ''; svg.innerHTML = '';
+function renderTree(data){
+  window._data=data;
+  const{persones,unions}=data;
+  const container=document.getElementById('tree');
+  const svg=document.getElementById('svg-lines');
+  container.innerHTML=''; svg.innerHTML='';
 
-  const maps = buildMaps(data);
-  const { byId, partnersOf } = maps;
-  const gen = assignGen(persones, maps);
-  const maxGen = Math.max(...Object.values(gen));
+  const maps=buildMaps(data);
+  const{byId,partnersOf}=maps;
+  const gen=assignGen(persones,maps);
+  window._maps=maps; window._gen=gen;
 
-  const byGen = Array.from({ length: maxGen + 1 }, (_, i) => persones.filter(p => gen[p.id] === i));
+  const maxGen=Math.max(...Object.values(gen));
+  const byGen=Array.from({length:maxGen+1},(_,i)=>persones.filter(p=>gen[p.id]===i));
 
-  byGen.forEach((gp, g) => {
-    const row = document.createElement('div');
-    row.className = 'gen-row';
-    row.dataset.gen = g;
-
-    const lbl = document.createElement('span');
-    lbl.className = 'gen-label';
-    lbl.textContent = t.gen[g] || `G${g}`;
+  byGen.forEach((gp,g)=>{
+    const row=document.createElement('div');
+    row.className='gen-row'; row.dataset.gen=g;
+    const lbl=document.createElement('span');
+    lbl.className='gen-label'; lbl.textContent=t.gen[maxGen-g]||`G${g}`;
     row.appendChild(lbl);
 
-    const seen = new Set();
-    const groups = [];
-
-    gp.forEach(p => {
-      if (seen.has(p.id)) return;
-      const partner = (partnersOf[p.id] || []).find(pid => gen[pid] === g && byId[pid]);
-      if (partner && !seen.has(partner)) {
-        groups.push([p, byId[partner]]);
-        seen.add(p.id); seen.add(partner);
-      } else if (!partner) {
-        groups.push([p]);
-        seen.add(p.id);
-      }
+    const seen=new Set();
+    const groups=[];
+    gp.forEach(p=>{
+      if(seen.has(p.id)) return;
+      const partner=(partnersOf[p.id]||[]).find(pid=>gen[pid]===g&&byId[pid]);
+      if(partner&&!seen.has(partner)){
+        groups.push([p,byId[partner]]); seen.add(p.id); seen.add(partner);
+      } else if(!partner){ groups.push([p]); seen.add(p.id); }
     });
 
-    groups.forEach(pair => {
-      const unit = document.createElement('div');
-      unit.className = 'family-unit';
-      const crow = document.createElement('div');
-      crow.className = 'couple-row';
-      pair.forEach((person, i) => {
-        if (i === 1) { const h = document.createElement('span'); h.className = 'heart'; h.textContent = '♡'; crow.appendChild(h); }
-        crow.appendChild(makeCard(person, maps));
+    groups.forEach(pair=>{
+      const unit=document.createElement('div'); unit.className='family-unit';
+      const crow=document.createElement('div'); crow.className='couple-row';
+      pair.forEach((person,i)=>{
+        if(i===1){const h=document.createElement('span');h.className='heart';h.textContent='♡';crow.appendChild(h);}
+        crow.appendChild(makeCard(person,maps));
       });
-      unit.appendChild(crow);
-      row.appendChild(unit);
+      unit.appendChild(crow); row.appendChild(unit);
     });
-
     container.appendChild(row);
   });
 
-  requestAnimationFrame(() => drawLines(persones, maps, gen));
+  requestAnimationFrame(()=>drawLines(persones,maps,gen));
 }
 
-function makeCard(p, maps) {
-  const { byId, childrenOf, partnersOf } = maps;
-  const card = document.createElement('div');
-  card.className = 'person' + (p.genere ? ` ${p.genere}` : '');
-  if (p.id === 'p13') card.classList.add('jo');
-  card.dataset.id = p.id;
+function makeCard(p,maps){
+  const card=document.createElement('div');
+  card.className='person'+(p.genere?` ${p.genere}`:'');
+  if(p.id==='p13') card.classList.add('jo');
+  card.dataset.id=p.id;
 
-  const foto = document.createElement('div');
-  foto.className = 'person-foto';
-  if (p.foto_url) {
-    const img = document.createElement('img');
-    img.src = p.foto_url; img.alt = p.nom;
-    img.onerror = () => { foto.innerHTML = ''; foto.textContent = p.genere === 'dona' ? '👩' : '👨'; };
+  const foto=document.createElement('div'); foto.className='person-foto';
+  if(p.foto_url){
+    const img=document.createElement('img'); img.src=p.foto_url; img.alt=p.nom;
+    img.onerror=()=>{foto.innerHTML='';foto.textContent=p.genere==='dona'?'👩':'👨';};
     foto.appendChild(img);
-  } else {
-    foto.textContent = p.genere === 'dona' ? '👩' : p.genere === 'home' ? '👨' : '🧑';
-  }
+  } else { foto.textContent=p.genere==='dona'?'👩':p.genere==='home'?'👨':'🧑'; }
 
-  const info = document.createElement('div');
-  info.className = 'person-info';
-  const nom = document.createElement('div');
-  nom.className = 'person-nom';
-  nom.textContent = [p.nom, p.cognom1, p.cognom2].filter(Boolean).join(' ');
-  const dates = document.createElement('div');
-  dates.className = 'person-dates';
-  const ny = p.data_naix ? p.data_naix.slice(0,4) : null;
-  const dy = p.data_mort ? p.data_mort.slice(0,4) : null;
-  dates.textContent = ny ? (dy ? `${ny} – ${dy}` : `* ${ny}`) : '';
-  info.append(nom, dates);
-  card.append(foto, info);
-  card.addEventListener('click', () => openModal(p, maps));
+  const info=document.createElement('div'); info.className='person-info';
+  const nom=document.createElement('div'); nom.className='person-nom'; nom.textContent=nomC(p);
+  const dates=document.createElement('div'); dates.className='person-dates';
+  const ny=p.data_naix?p.data_naix.slice(0,4):null, dy=p.data_mort?p.data_mort.slice(0,4):null;
+  dates.textContent=ny?(dy?`${ny} – ${dy}`:`* ${ny}`):'';
+  info.append(nom,dates); card.append(foto,info);
+  card.addEventListener('click',()=>openModal(p,maps));
   return card;
 }
 
-function drawLines(persones, maps, gen) {
-  const { byId } = maps;
-  const wrap = document.getElementById('tree-wrap');
-  const svg  = document.getElementById('svg-lines');
-  const canvas = document.getElementById('canvas');
-  const wRect = wrap.getBoundingClientRect();
+// ── LÍNIES ───────────────────────────────────────────────────
+function drawLines(persones,maps,gen){
+  const{byId}=maps;
+  const wrap=document.getElementById('tree-wrap');
+  const svg=document.getElementById('svg-lines');
+  const wRect=wrap.getBoundingClientRect();
 
-  function pos(id) {
-    const el = document.querySelector(`.person[data-id="${id}"]`);
-    if (!el) return null;
-    const r = el.getBoundingClientRect();
-    const x = r.left - wRect.left + canvas.scrollLeft;
-    const y = r.top  - wRect.top  + canvas.scrollTop;
-    return { x, y, w: r.width, h: r.height, cx: x + r.width/2, top: y, bot: y + r.height };
+  function pos(id){
+    const el=document.querySelector(`.person[data-id="${id}"]`);
+    if(!el) return null;
+    const r=el.getBoundingClientRect();
+    const x=r.left-wRect.left, y=r.top-wRect.top;
+    return{x,y,w:r.width,h:r.height,cx:x+r.width/2,top:y,bot:y+r.height};
   }
 
-  svg.setAttribute('width',  wrap.scrollWidth);
-  svg.setAttribute('height', wrap.scrollHeight);
+  svg.setAttribute('width',wrap.scrollWidth);
+  svg.setAttribute('height',wrap.scrollHeight);
 
-  // Couple lines
-  (window._data.unions || []).forEach(u => {
-    if (gen[u.persona1_id] !== gen[u.persona2_id]) return;
-    const r1 = pos(u.persona1_id), r2 = pos(u.persona2_id);
-    if (!r1 || !r2) return;
-    const line = document.createElementNS('http://www.w3.org/2000/svg','line');
-    line.setAttribute('x1', r1.x + r1.w); line.setAttribute('y1', r1.cx - r1.w/2 + r1.h/2);
-    line.setAttribute('x2', r2.x);         line.setAttribute('y2', r1.cx - r1.w/2 + r1.h/2);
-    // Simplify: just midpoint horizontal line
-    const l2 = document.createElementNS('http://www.w3.org/2000/svg','line');
-    l2.setAttribute('x1', r1.x + r1.w); l2.setAttribute('y1', r1.top + r1.h/2);
-    l2.setAttribute('x2', r2.x);        l2.setAttribute('y2', r1.top + r1.h/2);
-    l2.setAttribute('class','line-couple');
-    svg.appendChild(l2);
+  // Línies de parella (horitzontal)
+  (window._data.unions||[]).forEach(u=>{
+    if(gen[u.persona1_id]!==gen[u.persona2_id]) return;
+    const r1=pos(u.persona1_id),r2=pos(u.persona2_id);
+    if(!r1||!r2) return;
+    const midY=r1.top+r1.h/2;
+    const lx1=Math.min(r1.x+r1.w,r2.x+r2.w), lx2=Math.max(r1.x,r2.x);
+    const l=document.createElementNS('http://www.w3.org/2000/svg','line');
+    l.setAttribute('x1',lx1);l.setAttribute('y1',midY);
+    l.setAttribute('x2',lx2);l.setAttribute('y2',midY);
+    l.setAttribute('class','line-couple'); svg.appendChild(l);
   });
 
-  // Parent→child lines
-  persones.forEach(child => {
-    const pIds = [child.pare_id, child.mare_id].filter(id => id && byId[id]);
-    if (!pIds.length) return;
-    const rc = pos(child.id);
-    if (!rc) return;
-    const prects = pIds.map(pos).filter(Boolean);
-    if (!prects.length) return;
-    const px = prects.reduce((s,r) => s + r.cx, 0) / prects.length;
-    const py = prects[0].bot;
-    const mid = (py + rc.top) / 2;
-    const path = document.createElementNS('http://www.w3.org/2000/svg','path');
-    path.setAttribute('d', `M ${px} ${py} C ${px} ${mid}, ${rc.cx} ${mid}, ${rc.cx} ${rc.top}`);
-    path.setAttribute('class','line-child');
-    svg.appendChild(path);
+  // Línies pare/mare → fill
+  persones.forEach(child=>{
+    const pIds=[child.pare_id,child.mare_id].filter(id=>id&&byId[id]);
+    if(!pIds.length) return;
+    const rc=pos(child.id); if(!rc) return;
+    const prects=pIds.map(pos).filter(Boolean); if(!prects.length) return;
+    const px=prects.reduce((s,r)=>s+r.cx,0)/prects.length;
+    const py=Math.max(...prects.map(r=>r.bot));
+    const mid=(py+rc.top)/2;
+    const path=document.createElementNS('http://www.w3.org/2000/svg','path');
+    path.setAttribute('d',`M ${px} ${py} C ${px} ${mid}, ${rc.cx} ${mid}, ${rc.cx} ${rc.top}`);
+    path.setAttribute('class','line-child'); svg.appendChild(path);
   });
 }
 
-// ── MODAL ────────────────────────────────────────────────────
-function openModal(p, maps) {
-  const { byId, childrenOf, partnersOf } = maps;
-  const fotoEl = document.getElementById('modal-foto');
-  fotoEl.innerHTML = p.foto_url ? `<img src="${p.foto_url}" alt="${p.nom}">` : (p.genere === 'dona' ? '👩' : p.genere === 'home' ? '👨' : '🧑');
-  document.getElementById('modal-nom').textContent = [p.nom, p.cognom1, p.cognom2].filter(Boolean).join(' ');
-  document.getElementById('modal-sub').textContent = p.genere === 'home' ? t.home : p.genere === 'dona' ? t.dona : '';
-  const dl = document.getElementById('modal-dl');
-  dl.innerHTML = '';
-  const add = (lbl, val) => { if (!val) return; dl.innerHTML += `<dt>${lbl}</dt><dd>${val}</dd>`; };
-  const fmt = d => d ? new Date(d).toLocaleDateString(lang === 'ca' ? 'ca-ES' : 'es-ES') : null;
-  const nomComplet = x => [x.nom, x.cognom1, x.cognom2].filter(Boolean).join(' ');
-  add(t.naix, fmt(p.data_naix));
-  add(t.lloc_naix, p.lloc_naix);
-  if (p.data_mort || p.lloc_mort) { add(t.mort, fmt(p.data_mort) || '—'); add(t.lloc_mort, p.lloc_mort); }
-  add(t.ofici, p.ofici);
-  if (p.llocs && p.llocs.length) add(t.llocs, p.llocs.join(', '));
-  const partners = (partnersOf[p.id]||[]).map(id=>byId[id]).filter(Boolean);
-  if (partners.length) add(t.parella, partners.map(nomComplet).join(', '));
-  const pare = p.pare_id && byId[p.pare_id], mare = p.mare_id && byId[p.mare_id];
-  if (pare || mare) add(t.pares, [pare,mare].filter(Boolean).map(nomComplet).join(' · '));
-  const fills = (childrenOf[p.id]||[]).map(id=>byId[id]).filter(Boolean);
-  if (fills.length) add(t.fills, fills.map(nomComplet).join(', '));
-  const notesEl = document.getElementById('modal-notes');
-  notesEl.textContent = p.notes || '';
-  notesEl.style.display = p.notes ? 'block' : 'none';
+// ── MODAL VIEW ───────────────────────────────────────────────
+let _currentPersonId=null;
+
+function openModal(p,maps){
+  const{byId,childrenOf,partnersOf}=maps;
+  _currentPersonId=p.id;
+
+  // Reset: mode vista
+  document.getElementById('view-mode').style.display='block';
+  document.getElementById('edit-form').style.display='none';
+  document.getElementById('modal-edit-btn').textContent=t.edit||'✏️ Editar';
+
+  const fotoEl=document.getElementById('modal-foto');
+  fotoEl.innerHTML=p.foto_url?`<img src="${p.foto_url}" alt="${p.nom}">`:(p.genere==='dona'?'👩':p.genere==='home'?'👨':'🧑');
+  document.getElementById('modal-nom').textContent=nomC(p);
+  document.getElementById('modal-sub').textContent=p.genere==='home'?t.home:p.genere==='dona'?t.dona:'';
+
+  const dl=document.getElementById('modal-dl'); dl.innerHTML='';
+  const add=(lbl,val)=>{if(!val&&val!==0) return; dl.innerHTML+=`<dt>${lbl}</dt><dd>${val}</dd>`;};
+  const fmt=d=>d?new Date(d).toLocaleDateString(lang==='ca'?'ca-ES':'es-ES'):null;
+  add(t.naix,fmt(p.data_naix)); add(t.lloc_naix,p.lloc_naix);
+  if(p.data_mort||p.lloc_mort){add(t.mort,fmt(p.data_mort)||'—');add(t.lloc_mort,p.lloc_mort);}
+  add(t.ofici,p.ofici);
+  if(p.llocs&&p.llocs.length) add(t.llocs,p.llocs.join(', '));
+  const partners=(partnersOf[p.id]||[]).map(id=>byId[id]).filter(Boolean);
+  if(partners.length) add(t.parella,partners.map(nomC).join(', '));
+  const pare=p.pare_id&&byId[p.pare_id],mare=p.mare_id&&byId[p.mare_id];
+  if(pare||mare) add(t.pares,[pare,mare].filter(Boolean).map(nomC).join(' · '));
+  const fills=(childrenOf[p.id]||[]).map(id=>byId[id]).filter(Boolean);
+  if(fills.length) add(t.fills,fills.map(nomC).join(', '));
+  const notesEl=document.getElementById('modal-notes');
+  notesEl.textContent=p.notes||''; notesEl.style.display=p.notes?'block':'none';
+
   document.getElementById('modal-bg').classList.add('open');
 }
-function closeModal() { document.getElementById('modal-bg').classList.remove('open'); }
+
+function closeModal(){document.getElementById('modal-bg').classList.remove('open');}
+
+// ── MODAL EDIT ───────────────────────────────────────────────
+function toggleEdit(){
+  const viewEl=document.getElementById('view-mode');
+  const editEl=document.getElementById('edit-form');
+  const isEdit=editEl.style.display==='block';
+
+  if(isEdit){
+    viewEl.style.display='block'; editEl.style.display='none';
+    document.getElementById('modal-edit-btn').textContent=t.edit||'✏️ Editar';
+    return;
+  }
+
+  // Obre mode edició
+  const p=window._data.persones.find(x=>x.id===_currentPersonId);
+  if(!p) return;
+
+  document.getElementById('e-nom').value=p.nom||'';
+  document.getElementById('e-cog1').value=p.cognom1||'';
+  document.getElementById('e-cog2').value=p.cognom2||'';
+  document.getElementById('e-gen').value=p.genere||'';
+  document.getElementById('e-naix').value=p.data_naix||'';
+  document.getElementById('e-lloc-naix').value=p.lloc_naix||'';
+  document.getElementById('e-mort').value=p.data_mort||'';
+  document.getElementById('e-lloc-mort').value=p.lloc_mort||'';
+  document.getElementById('e-ofici').value=p.ofici||'';
+  document.getElementById('e-foto').value=p.foto_url||'';
+  document.getElementById('e-llocs').value=(p.llocs||[]).join(', ');
+  document.getElementById('e-notes').value=p.notes||'';
+
+  // Emplena selects de pare/mare
+  const persones=window._data.persones;
+  ['e-pare','e-mare'].forEach(selId=>{
+    const sel=document.getElementById(selId);
+    const isP=selId==='e-pare';
+    sel.innerHTML='<option value="">— cap —</option>';
+    persones.filter(x=>x.id!==_currentPersonId).forEach(x=>{
+      const opt=document.createElement('option');
+      opt.value=x.id; opt.textContent=nomC(x);
+      if((isP&&p.pare_id===x.id)||(!isP&&p.mare_id===x.id)) opt.selected=true;
+      sel.appendChild(opt);
+    });
+  });
+
+  document.getElementById('save-ok').style.display='none';
+  viewEl.style.display='none'; editEl.style.display='block';
+  document.getElementById('modal-edit-btn').textContent='← Vista';
+}
+
+function saveEdit(){
+  const p=window._data.persones.find(x=>x.id===_currentPersonId);
+  if(!p) return;
+
+  p.nom=document.getElementById('e-nom').value.trim();
+  p.cognom1=document.getElementById('e-cog1').value.trim()||null;
+  p.cognom2=document.getElementById('e-cog2').value.trim()||null;
+  p.genere=document.getElementById('e-gen').value||null;
+  p.data_naix=document.getElementById('e-naix').value||null;
+  p.lloc_naix=document.getElementById('e-lloc-naix').value.trim()||null;
+  p.data_mort=document.getElementById('e-mort').value||null;
+  p.lloc_mort=document.getElementById('e-lloc-mort').value.trim()||null;
+  p.ofici=document.getElementById('e-ofici').value.trim()||null;
+  p.foto_url=document.getElementById('e-foto').value.trim()||null;
+  p.notes=document.getElementById('e-notes').value.trim()||null;
+  const llocsTxt=document.getElementById('e-llocs').value.trim();
+  p.llocs=llocsTxt?llocsTxt.split(',').map(s=>s.trim()).filter(Boolean):[];
+  p.pare_id=document.getElementById('e-pare').value||null;
+  p.mare_id=document.getElementById('e-mare').value||null;
+
+  downloadJSON();
+  document.getElementById('save-ok').style.display='block';
+
+  // Refresca la targeta al tree
+  renderTree(window._data);
+  // Torna a obrir el modal amb les dades actualitzades
+  setTimeout(()=>{
+    const maps=buildMaps(window._data);
+    openModal(p,maps);
+  },100);
+}
+
+// ── AFEGIR NOVA PERSONA ──────────────────────────────────────
+function openAddModal(){
+  const newId='p'+(window._data.persones.length+1);
+  const newP={
+    id:newId,nom:'',cognom1:null,cognom2:null,genere:null,
+    data_naix:null,lloc_naix:null,data_mort:null,lloc_mort:null,
+    ofici:null,foto_url:null,llocs:[],notes:null,pare_id:null,mare_id:null
+  };
+  window._data.persones.push(newP);
+  _currentPersonId=newId;
+  document.getElementById('view-mode').style.display='none';
+  document.getElementById('edit-form').style.display='block';
+  document.getElementById('modal-edit-btn').textContent='← Vista';
+  document.getElementById('modal-bg').classList.add('open');
+
+  // Reset formulari
+  ['e-nom','e-cog1','e-cog2','e-naix','e-lloc-naix','e-mort','e-lloc-mort','e-ofici','e-foto','e-llocs','e-notes']
+    .forEach(id=>document.getElementById(id).value='');
+  document.getElementById('e-gen').value='';
+  ['e-pare','e-mare'].forEach(selId=>{
+    const sel=document.getElementById(selId);
+    sel.innerHTML='<option value="">— cap —</option>';
+    window._data.persones.filter(x=>x.id!==newId).forEach(x=>{
+      const opt=document.createElement('option'); opt.value=x.id; opt.textContent=nomC(x);
+      sel.appendChild(opt);
+    });
+  });
+  document.getElementById('save-ok').style.display='none';
+}
+
+// ── DESCARREGAR JSON ─────────────────────────────────────────
+function downloadJSON(){
+  const blob=new Blob([JSON.stringify(window._data,null,2)],{type:'application/json'});
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='familia.json'; a.click();
+}
 
 // ── PAN ──────────────────────────────────────────────────────
-const canvas = document.getElementById('canvas');
-let drag = false, sx, sy, sl, st;
-canvas.addEventListener('mousedown', e => {
-  if (e.target.closest('.person')) return;
-  drag = true; sx = e.pageX; sy = e.pageY; sl = canvas.scrollLeft; st = canvas.scrollTop;
-});
-canvas.addEventListener('mousemove', e => {
-  if (!drag) return; e.preventDefault();
-  canvas.scrollLeft = sl - (e.pageX - sx);
-  canvas.scrollTop  = st - (e.pageY - sy);
-});
-['mouseup','mouseleave'].forEach(ev => canvas.addEventListener(ev, () => drag = false));
+const canvas=document.getElementById('canvas');
+let drag=false,sx,sy,sl,st;
+canvas.addEventListener('mousedown',e=>{if(e.target.closest('.person'))return;drag=true;sx=e.pageX;sy=e.pageY;sl=canvas.scrollLeft;st=canvas.scrollTop;});
+canvas.addEventListener('mousemove',e=>{if(!drag)return;e.preventDefault();canvas.scrollLeft=sl-(e.pageX-sx);canvas.scrollTop=st-(e.pageY-sy);});
+['mouseup','mouseleave'].forEach(ev=>canvas.addEventListener(ev,()=>drag=false));
 
 // ── INIT ─────────────────────────────────────────────────────
-document.getElementById('load-txt').textContent = t.load;
-document.getElementById('btn-lang').textContent = t.lang;
-document.getElementById('btn-add').textContent = t.addPerson;
-document.getElementById('lg-home').textContent = t.home;
-document.getElementById('lg-dona').textContent = t.dona;
-document.getElementById('lg-jo').textContent = t.jo;
+document.getElementById('load-txt').textContent=t.load;
+document.getElementById('btn-lang').textContent=t.lang;
+document.getElementById('bf-title').textContent=t.bannerTitle;
+document.getElementById('bf-sub').textContent=t.bannerSub;
 
-loadData().then(data => {
+loadData().then(data=>{
   renderTree(data);
-  document.getElementById('loading').style.display = 'none';
-}).catch(err => {
-  document.getElementById('tree').innerHTML =
-    `<p style="color:red;padding:40px;font-family:monospace">Error carregant dades:<br>${err.message}<br><br>Comprova config.js → FAMILIA_JSON_URL</p>`;
-  document.getElementById('loading').style.display = 'none';
+  document.getElementById('loading').style.display='none';
+}).catch(err=>{
+  document.getElementById('tree').innerHTML=`<p style="color:red;padding:40px;font-family:monospace">Error: ${err.message}<br>Comprova config.js → FAMILIA_JSON_URL</p>`;
+  document.getElementById('loading').style.display='none';
 });
 </script>
 </body>
