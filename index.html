@@ -153,6 +153,45 @@
   @keyframes spin{to{transform:rotate(360deg);}}
   #loading p{color:var(--hdr);font-size:.9rem;}
 
+  /* EDIT MODE: drag + connexions */
+  body.edit-mode .person{cursor:grab;}
+  body.edit-mode .person:active{cursor:grabbing;}
+  .person.connect-src{outline:3px solid #4caf50!important;outline-offset:2px;}
+  .person.dragging-card{opacity:.7;z-index:50;}
+  body.edit-mode #btn-add-person{display:none;}
+  body.edit-mode #banner-form{display:none;}
+
+  #btn-reset-pos{
+    position:fixed;bottom:64px;right:20px;z-index:100;
+    background:#888;color:#fff;border:none;border-radius:50px;
+    padding:8px 15px;font-size:.78rem;cursor:pointer;font-family:inherit;
+    display:none;
+  }
+  body.edit-mode #btn-reset-pos{display:block;}
+
+  /* Connection picker */
+  #conn-picker{
+    display:none;position:fixed;z-index:400;
+    background:var(--card-bg);border:1.5px solid var(--border);
+    border-radius:10px;box-shadow:0 8px 28px rgba(0,0,0,.22);
+    padding:14px 18px;min-width:230px;
+  }
+  #conn-picker h4{color:var(--hdr);font-size:.88rem;margin-bottom:10px;line-height:1.35;word-break:break-word;}
+  .cp-btn{
+    display:block;width:100%;text-align:left;
+    padding:8px 12px;margin-bottom:6px;
+    background:#f5ede0;border:1px solid var(--border);
+    border-radius:5px;cursor:pointer;font-family:inherit;font-size:.82rem;
+  }
+  .cp-btn:hover{background:var(--border);}
+  .cp-btn:last-child{margin-bottom:0;}
+  .cp-del{background:#fdecea!important;border-color:#f5c6cb!important;color:#c62828!important;}
+  .cp-del:hover{background:#f5c6cb!important;}
+
+  /* línies clicables en edit mode */
+  .line-del{cursor:pointer;pointer-events:all;}
+  .line-del:hover{stroke:#e53935!important;stroke-width:4;}
+
   #legend{
     position:fixed;bottom:14px;left:16px;z-index:100;
     background:rgba(255,249,242,.92);border:1px solid var(--border);
@@ -169,6 +208,7 @@
 <header>
   <h1>🌳 Família Santamaria · Velasco</h1>
   <a href="admin.html">⚙ Admin</a>
+  <button id="btn-edit-mode" onclick="toggleEditMode()">🔗 Connexions</button>
   <button onclick="toggleLang()" id="btn-lang">Castellano</button>
 </header>
 
@@ -258,6 +298,18 @@
   <div><div class="lb" style="border-top:4px solid #3a6186"></div><span id="lg-home">Home</span></div>
   <div><div class="lb" style="border-top:4px solid #a04060"></div><span id="lg-dona">Dona</span></div>
   <div><div class="lb" style="outline:2px solid gold"></div><span id="lg-jo">Tu</span></div>
+</div>
+
+<button id="btn-reset-pos" onclick="resetPositions()" title="Restablir posicions automàtiques">🔄 Reset layout</button>
+
+<!-- Connection picker -->
+<div id="conn-picker">
+  <h4 id="cp-title"></h4>
+  <button class="cp-btn" id="cp-parella" onclick="applyConn('parella')">💑 Parella / Cònjuge</button>
+  <button class="cp-btn" id="cp-ab"       onclick="applyConn('AésPareDeB')"></button>
+  <button class="cp-btn" id="cp-ba"       onclick="applyConn('BésPareDeA')"></button>
+  <hr style="margin:8px 0;border:none;border-top:1px solid #eee">
+  <button class="cp-btn cp-del"           onclick="closeConnPicker()">✕ Cancel·lar</button>
 </div>
 
 <script src="config.js"></script>
@@ -479,6 +531,7 @@ function renderTree(data){
   window._maps=maps; window._gen=gen;
 
   const{xPos,yPos,placedBy}=computeLayout(data,maps,gen);
+  loadSavedPositions(xPos,yPos); // aplica posicions manuals si existeixen
   window._xPos=xPos; window._yPos=yPos; window._placedBy=placedBy;
 
   const maxGen=Math.max(...Object.values(gen));
@@ -544,7 +597,7 @@ function makeCard(p,maps){
   const ny=p.data_naix?p.data_naix.slice(0,4):null, dy=p.data_mort?p.data_mort.slice(0,4):null;
   dates.textContent=ny?(dy?`${ny} – ${dy}`:`* ${ny}`):'';
   info.append(nom,dates); card.append(foto,info);
-  card.addEventListener('click',()=>openModal(p,maps));
+  initCardInteraction(card, p.id);
   return card;
 }
 
@@ -568,6 +621,7 @@ function drawLines(persones,maps,gen){
     l.setAttribute('x2',Math.round(x2));l.setAttribute('y2',Math.round(y2));
     l.setAttribute('class',cls||'line-child');
     svg.appendChild(l);
+    return l;
   }
 
   const maxX=Math.max(...Object.values(xP))+CW+80;
@@ -581,7 +635,19 @@ function drawLines(persones,maps,gen){
     if(!r1||!r2) return;
     const midY=r1.mid;
     const lx1=Math.min(r1.x+r1.w,r2.x+r2.w), lx2=Math.max(r1.x,r2.x);
-    seg(lx1,midY,lx2,midY,'line-couple');
+    const l=seg(lx1,midY,lx2,midY,'line-couple');
+    if(_editMode){
+      l.classList.add('line-del');
+      l.title='Clic per eliminar aquesta unió';
+      l.addEventListener('click',e=>{
+        e.stopPropagation();
+        const p1=window._data.persones.find(p=>p.id===u.persona1_id);
+        const p2=window._data.persones.find(p=>p.id===u.persona2_id);
+        if(!confirm(`Eliminar la unió entre ${p1?nomC(p1):u.persona1_id} i ${p2?nomC(p2):u.persona2_id}?`)) return;
+        window._data.unions=(window._data.unions||[]).filter(x=>x.id!==u.id);
+        renderTree(window._data); saveToGitHub();
+      });
+    }
   });
 
   // Brackets pares → fills
@@ -818,6 +884,163 @@ let drag=false,sx,sy,sl,st;
 canvas.addEventListener('mousedown',e=>{if(e.target.closest('.person'))return;drag=true;sx=e.pageX;sy=e.pageY;sl=canvas.scrollLeft;st=canvas.scrollTop;});
 canvas.addEventListener('mousemove',e=>{if(!drag)return;e.preventDefault();canvas.scrollLeft=sl-(e.pageX-sx);canvas.scrollTop=st-(e.pageY-sy);});
 ['mouseup','mouseleave'].forEach(ev=>canvas.addEventListener(ev,()=>drag=false));
+
+// ── EDIT MODE: DRAG + CONNEXIONS ────────────────────────────
+let _editMode=false;
+let _connectSrc=null;
+let _connTarget=null;
+let _cardDrag=null;
+
+function toggleEditMode(){
+  _editMode=!_editMode;
+  document.body.classList.toggle('edit-mode',_editMode);
+  document.getElementById('btn-edit-mode').textContent=_editMode?'✅ Sortir d\'edició':'🔗 Connexions';
+  clearConnectSrc();
+  closeConnPicker();
+  // Redibuja per activar/desactivar les línies clicables
+  if(window._data) requestAnimationFrame(()=>drawLines(window._data.persones,window._maps,window._gen));
+}
+
+function clearConnectSrc(){
+  if(_connectSrc){
+    const el=document.querySelector(`.person[data-id="${_connectSrc}"]`);
+    if(el) el.classList.remove('connect-src');
+  }
+  _connectSrc=null;
+}
+
+// ── INTERACCIÓ TARGETES (drag + click) ───────────────────────
+function initCardInteraction(card,pid){
+  card.addEventListener('mousedown',e=>{
+    if(e.button!==0) return;
+    _cardDrag={
+      pid,
+      startX:e.clientX,startY:e.clientY,
+      origX:window._xPos[pid]||0,
+      origY:window._yPos[pid]||0,
+      moved:false
+    };
+    e.stopPropagation();
+  });
+}
+
+document.addEventListener('mousemove',e=>{
+  if(!_cardDrag) return;
+  const dx=e.clientX-_cardDrag.startX, dy=e.clientY-_cardDrag.startY;
+  if(!_cardDrag.moved&&Math.abs(dx)<5&&Math.abs(dy)<5) return;
+  _cardDrag.moved=true;
+  const newX=_cardDrag.origX+dx, newY=_cardDrag.origY+dy;
+  const card=document.querySelector(`.person[data-id="${_cardDrag.pid}"]`);
+  if(card){card.style.left=newX+'px';card.style.top=newY+'px';card.classList.add('dragging-card');}
+  window._xPos[_cardDrag.pid]=newX;
+  window._yPos[_cardDrag.pid]=newY;
+  requestAnimationFrame(()=>drawLines(window._data.persones,window._maps,window._gen));
+});
+
+document.addEventListener('mouseup',e=>{
+  if(!_cardDrag) return;
+  const{pid,moved}=_cardDrag;
+  const card=document.querySelector(`.person[data-id="${pid}"]`);
+  if(card) card.classList.remove('dragging-card');
+  _cardDrag=null;
+  if(moved){
+    savePositions();
+    return;
+  }
+  // Clic sense arrossegar
+  const p=window._data&&window._data.persones.find(x=>x.id===pid);
+  if(!p) return;
+  if(_editMode){
+    handleConnectClick(e,pid);
+  } else {
+    openModal(p,window._maps);
+  }
+});
+
+// Tanca el picker si es clica fora
+document.addEventListener('mousedown',e=>{
+  const picker=document.getElementById('conn-picker');
+  if(picker.style.display==='block'&&!picker.contains(e.target)) closeConnPicker();
+});
+
+// ── LÒGICA CONNEXIONS ─────────────────────────────────────────
+function handleConnectClick(e,pid){
+  if(!_connectSrc){
+    _connectSrc=pid;
+    document.querySelector(`.person[data-id="${pid}"]`).classList.add('connect-src');
+  } else if(_connectSrc===pid){
+    closeConnPicker(); // tanca picker i neteja selecció
+  } else {
+    _connTarget=pid;
+    const srcP=window._data.persones.find(p=>p.id===_connectSrc);
+    const tgtP=window._data.persones.find(p=>p.id===_connTarget);
+    const sN=srcP?nomC(srcP):_connectSrc, tN=tgtP?nomC(tgtP):_connTarget;
+    document.getElementById('cp-title').textContent=sN+' ↔ '+tN;
+    document.getElementById('cp-ab').textContent=`⬇️ ${sN} és pare/mare de ${tN}`;
+    document.getElementById('cp-ba').textContent=`⬆️ ${tN} és pare/mare de ${sN}`;
+    const picker=document.getElementById('conn-picker');
+    picker.style.display='block';
+    const W=picker.offsetWidth||240;
+    picker.style.left=Math.min(e.clientX,window.innerWidth-W-10)+'px';
+    picker.style.top=Math.min(e.clientY,window.innerHeight-240)+'px';
+  }
+}
+
+function closeConnPicker(){
+  document.getElementById('conn-picker').style.display='none';
+  clearConnectSrc();
+  _connTarget=null;
+}
+
+function applyConn(type){
+  const src=_connectSrc, tgt=_connTarget;
+  if(!src||!tgt){closeConnPicker();return;}
+  closeConnPicker();
+  const data=window._data;
+
+  if(type==='parella'){
+    const exists=(data.unions||[]).some(u=>
+      (u.persona1_id===src&&u.persona2_id===tgt)||(u.persona1_id===tgt&&u.persona2_id===src));
+    if(exists){alert('Ja existeix una unió entre aquestes persones.');return;}
+    const nums=(data.unions||[]).map(u=>parseInt(u.id.replace('u',''))||0);
+    const nextN=(nums.length?Math.max(...nums):0)+1;
+    data.unions=[...(data.unions||[]),{id:'u'+nextN,persona1_id:src,persona2_id:tgt}];
+  }
+  else if(type==='AésPareDeB'){
+    const child=data.persones.find(p=>p.id===tgt); if(!child) return;
+    const srcP=data.persones.find(p=>p.id===src);
+    if(srcP&&srcP.genere==='dona') child.mare_id=src; else child.pare_id=src;
+  }
+  else if(type==='BésPareDeA'){
+    const child=data.persones.find(p=>p.id===src); if(!child) return;
+    const tgtP=data.persones.find(p=>p.id===tgt);
+    if(tgtP&&tgtP.genere==='dona') child.mare_id=tgt; else child.pare_id=tgt;
+  }
+
+  renderTree(data);
+  saveToGitHub();
+}
+
+// ── POSICIONS GUARDADES ──────────────────────────────────────
+function savePositions(){
+  try{localStorage.setItem('arbre_pos',JSON.stringify({x:window._xPos,y:window._yPos}));}catch{}
+}
+
+function loadSavedPositions(xPos,yPos){
+  try{
+    const saved=localStorage.getItem('arbre_pos');
+    if(!saved) return;
+    const{x,y}=JSON.parse(saved);
+    Object.keys(x||{}).forEach(id=>{if(xPos[id]!==undefined) xPos[id]=x[id];});
+    Object.keys(y||{}).forEach(id=>{if(yPos[id]!==undefined) yPos[id]=y[id];});
+  }catch{}
+}
+
+function resetPositions(){
+  if(!confirm('Restablir el layout automàtic? Es perdran les posicions manuals.')) return;
+  localStorage.removeItem('arbre_pos');
+  renderTree(window._data);
+}
 
 // ── INIT ─────────────────────────────────────────────────────
 document.getElementById('load-txt').textContent=t.load;
